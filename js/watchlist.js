@@ -1,83 +1,101 @@
-// 🌟 WATCHLIST PAGE SCRIPT 🌟
+// 🌟 WATCHLIST PAGE LOGIC 🌟
 
-// Get the container where cards will be rendered
-const watchlistContainer = document.getElementById("watchlist"); // The grid for saved anime
+// Get the grid container where cards OR empty state will be shown
+const watchlistContainer = document.getElementById("watchlist"); // <div id="watchlist"> in HTML
 
-// Get the paragraph where we show "empty" message
-const emptyMessage = document.getElementById("emptyMessage");    // Text if watchlist has no items
+// Get the subtitle heading "Your saved anime" (or similar)
+const watchlistSubtitle = document.querySelector(".watchlist-subtitle"); // <h3 class="watchlist-subtitle">
 
-
-// Load watchlist array from localStorage
-function loadWatchlist() {                                       // Function to read saved list
-  const json = localStorage.getItem("watchlist");                // Get string from localStorage
-  if (!json) return [];                                          // If nothing saved yet → empty array
+// 🔐 Load watchlist array from localStorage (same key as in app.js)
+function loadWatchlist() {
+  const json = localStorage.getItem("watchlist");        // Read saved string from localStorage
+  if (!json) return [];                                  // If nothing stored yet → return empty array
 
   try {
-    return JSON.parse(json);                                     // Convert JSON string to JS array
-  } catch {
-    return [];                                                   // If something is broken → empty array
+    return JSON.parse(json);                             // Turn JSON string into JS array
+  } catch (error) {
+    console.error("Could not parse watchlist JSON", error); // Log error if JSON broken
+    return [];                                           // Fall back to empty array
   }
 }
 
-// Save watchlist array back to localStorage
-function saveWatchlist(list) {                                   // Function to save list
-  localStorage.setItem("watchlist", JSON.stringify(list));       // Turn array into JSON and save
+// 🔐 Save watchlist array back to localStorage
+function saveWatchlist(list) {
+  localStorage.setItem("watchlist", JSON.stringify(list)); // Turn array into JSON string and save
 }
 
+// 🎨 Render the watchlist page (shows either cards OR empty state)
+function renderWatchlist() {
+  const list = loadWatchlist();                         // Get current saved anime list
 
-// Build and show all cards in the watchlist grid
-function renderWatchlist() {                                     // Function to draw the page
-  const list = loadWatchlist();                                  // Get current saved anime
+  // 👉 CASE 1: NO SAVED ANIME
+  if (!list || list.length === 0) {
+    if (watchlistSubtitle) {
+      watchlistSubtitle.textContent = "No saved anime yet";
+    }
 
-  if (list.length === 0) {                                       // If there are no items
-    watchlistContainer.innerHTML = "";                           // Clear grid
-    emptyMessage.textContent = "Your watchlist is empty.";       // Show info message
-    return;                                                      // Stop here
+    watchlistContainer.innerHTML = `
+    <div class="watchlist-empty-wrapper">
+
+      <video class="empty-video" autoplay loop muted playsinline>
+        <source src="img/tears.mp4" type="video/mp4">
+      </video>
+
+      <p class="watchlist-empty">
+        Start exploring on the main page and add something to your watchlist
+      </p>
+
+    </div>
+  `;
+
+    return;
   }
 
-  // If we have items, clear the empty message
-  emptyMessage.textContent = "";                                 // Remove empty message text
 
-  let html = "";                                                 // Start building HTML for cards
+  // 👉 CASE 2: THERE *ARE* SAVED ANIME
+  if (watchlistSubtitle) {
+    watchlistSubtitle.textContent = "Your saved anime"; // Normal heading text
+  }
 
-  list.forEach((anime, index) => {                               // Loop over each saved anime
+  let html = "";                                       // Start with empty HTML string
+
+  list.forEach((anime, index) => {                     // Go through each saved anime
     html += `
-      <div class="result-card">                                  <!-- Reuse your card style -->
-        <div class="result-image-wrapper">                       <!-- Image frame -->
-          <img src="${anime.image}"                              <!-- Cover image -->
+      <div class="result-card">                        <!-- Reuse your card style -->
+        <div class="result-image-wrapper">
+          <img src="${anime.image}"                    <!-- Cover image -->
                class="result-image"
                alt="${anime.title}">
         </div>
 
-        <div class="result-title">${anime.title}</div>           <!-- Title text -->
+        <div class="result-title">${anime.title}</div> <!-- Title text -->
 
-        <div class="modal-info" style="margin-top:6px;">         <!-- Type / episodes / score -->
+        <div class="modal-info" style="margin-top:6px;"> <!-- Short info row -->
           Type: ${anime.type} · Episodes: ${anime.episodes} · Score: ${anime.score}
         </div>
 
-        <button class="modal-favorite-btn remove-btn"            <!-- Remove button -->
-                data-index="${index}">
-          Remove from Watchlist
+        <button class="modal-favorite-btn remove-btn"  <!-- Remove button -->
+          Remove
         </button>
       </div>
-    `;                                                           // Close card markup
+    `;
   });
 
-  watchlistContainer.innerHTML = html;                           // Insert cards in the grid
+  watchlistContainer.innerHTML = html;                 // Insert all cards into the page
 
-  // Add click handlers for all "Remove" buttons after cards are added
-  const removeButtons = document.querySelectorAll(".remove-btn");// All buttons with class remove-btn
+  // Add click listeners to all "Remove" buttons
+  const removeButtons = document.querySelectorAll(".remove-btn"); // All remove buttons
 
-  removeButtons.forEach(button => {                              // For each button
-    button.addEventListener("click", () => {                     // When clicked
-      const idx = Number(button.dataset.index);                  // Get index from data-index
-      const current = loadWatchlist();                           // Load latest watchlist
-      current.splice(idx, 1);                                    // Remove 1 item at position idx
-      saveWatchlist(current);                                    // Save updated list
-      renderWatchlist();                                         // Re-render the grid
+  removeButtons.forEach((button) => {                  // For each button
+    button.addEventListener("click", () => {           // When user clicks it
+      const idx = Number(button.dataset.index);        // Read which card index to remove
+      const current = loadWatchlist();                 // Load latest list
+      current.splice(idx, 1);                          // Remove 1 item at position idx
+      saveWatchlist(current);                          // Save updated list
+      renderWatchlist();                               // Re-render list (updates UI)
     });
   });
 }
 
-// Run once when the watchlist page loads
-renderWatchlist();                                               // Build the initial watchlist view
+// Run once on page load
+renderWatchlist();                                     // Build initial view

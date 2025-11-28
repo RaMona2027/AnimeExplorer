@@ -722,3 +722,80 @@ h3 {
   max-width: 1100px;                    /* same width as main grid */
   margin: 0 auto;                       /* center container */
 }
+/* Tagline above the search bar */
+.tagline {                                      /* the h3 with class="tagline" */
+  display: inline-block;                        /* so transform affects only the text box */
+  font-size: 22px;                              /* readable size */
+  font-weight: 700;                             /* bold text */
+  color: #ffffff;                               /* white text */
+  padding: 8px 14px;                            /* spacing around text */
+  background: rgba(0, 0, 0, 0.6);              /* dark strip behind text */
+  border-radius: 6px;                           /* soft corners */
+  text-shadow: 0 0 8px rgba(255, 27, 27, 0.7); /* red glow */
+  animation: taglinePulse 2.4s ease-in-out infinite; /* ⭐ looped animation */
+}
+
+/* Animation: small scale + glow pulse */
+@keyframes taglinePulse {
+  0% {
+    transform: scale(1);                        /* normal size */
+    text-shadow: 0 0 6px rgba(255, 27, 27, 0.4);/* soft glow */
+  }
+  50% {
+    transform: scale(1.03);                     /* tiny zoom */
+    text-shadow: 0 0 14px rgba(255, 27, 27, 1); /* strong glow */
+  }
+  100% {
+    transform: scale(1);                        /* back to normal */
+    text-shadow: 0 0 6px rgba(255, 27, 27, 0.4);/* soft glow again */
+  }
+
+@keyframes taglinePulse {
+  0% {
+    transform: scale(1);
+    text-shadow: 0 0 6px rgba(255, 27, 27, 0.4);
+  }
+  50% {
+    transform: scale(1.03);
+    text-shadow: 0 0 14px rgba(255, 27, 27, 1);
+  }
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 6px rgba(255, 27, 27, 0.4);
+  }
+}
+
+/* Watchlist subtitle ("Your saved anime") */
+.watchlist-subtitle {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;                         /* white text */
+  margin-top: -10px;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.8); /* readable on bg */
+
+  /* ⭐ same animation as main tagline */
+  display: inline-block;
+  animation: taglinePulse 2.4s ease-in-out infinite;
+}
+
+.watchlist-empty {
+  text-align: center;
+  font-size: 18px;
+  color: #ffffff;
+  margin-top: 10px;
+  opacity: 0.9;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+  border: none;
+}
+.empty-video {
+  width: 100px !important;     /* 💥 FORCE 300px */
+  max-width: 50% !important;  /* responsive fallback */
+  height: auto !important;     /* keep proportions */
+  display: block !important;
+  margin: 10px auto !important;
+  border-radius: 10px !important;
+}
+
+}
