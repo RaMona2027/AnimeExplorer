@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Anime explorer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<a href="watchlist.html" class="watchlist-link">
+  Go to your watchlist!
+</a>
+
+<h1>Re Anime</h1>
+<div class="hero-center">
+<h3>Ready for your next anime fix?</h3>
+
+<div class="search-container">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Type an anime title..."
+  >
+  <button id="searchButton">DIVE IN</button>
+</div>
+</div>
+
+<div id="results"></div> <!-- Cards will appear here -->
+
+<!-- Popup modal for showing a bigger card with more info -->
+<div id="mangaModal" class="modal"> <!-- Dark overlay, hidden by default -->
+  <div class="modal-content"> <!-- White popup box in the center -->
+
+    <button id="modalClose" class="modal-close">×</button> <!-- Close button -->
+
+    <div class="modal-layout">
+      <!-- LEFT COLUMN: image + title + info + button -->
+      <div class="modal-left">
+        <img id="modalImage" class="modal-image" src="" alt="Anime cover">
+
+        <h2 id="modalTitle" class="modal-title"></h2>
+        <p id="modalInfo" class="modal-info"></p>
+
+        <button id="favoriteButton" class="modal-favorite-btn">
+          Add to Watchlist
+        </button>
+      </div>
+
+      <!-- RIGHT COLUMN: description -->
+      <div class="modal-right">
+        <p id="modalSynopsis" class="modal-synopsis"></p>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
+
+</html>

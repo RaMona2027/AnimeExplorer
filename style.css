@@ -1,0 +1,19 @@
+body {
+  background-color: lightgray;
+}
+
+h1 {
+  color: red;
+}
+
+p {
+  color: blue;
+  font-size: 20px;
+}
+
+
+
+myButton {
+  background-color: pink;
+  padding: 12px;
+}

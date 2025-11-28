@@ -1,0 +1,28 @@
+<!DOCTYPE html> <!-- Tells the browser this is an HTML5 page -->
+<html lang="en"> <!-- Page language is English -->
+<head>
+  <meta charset="UTF-8"> <!-- Handles å, ä, ö, emojis etc -->
+  <title>Anime Watchlist</title> <!-- Title in the browser tab -->
+
+  <link rel="stylesheet" href="css/style.css"> <!-- Reuse the same CSS as main page -->
+</head>
+
+<body class="watchlist-page"> <!-- special class so we can style this page -->
+
+<a href="index.html" class="watchlist-link">
+  ⬅ Back to Re:Anime
+</a>
+
+<!-- Header block for title + subtitle -->
+<div class="watchlist-header"> <!-- centers title + subtitle -->
+  <h1 class="watchlist-main-title">WATCHLIST</h1> <!-- red manga title -->
+  <h3 class="watchlist-subtitle">Your saved anime!</h3> <!-- styled label -->
+</div>
+
+<!-- Watchlist grid / empty message will appear here -->
+<div id="watchlistContainer"></div> <!-- JS fills this -->
+
+<script src="js/watchlist.js"></script>
+</body>
+
+</html>
