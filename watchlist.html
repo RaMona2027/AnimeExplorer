@@ -4,28 +4,54 @@
   <meta charset="UTF-8"> <!-- Handles å, ä, ö, emojis etc -->
   <title>Anime Watchlist</title> <!-- Title in the browser tab -->
 
-  <link rel="stylesheet" href="css/style.css"> <!-- Reuse the same CSS as main page -->
+  <!-- Main shared stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="watchlist-page"> <!-- special class so we can style this page -->
-
-<a href="index.html" class="watchlist-link">
-  ⬅ Back to Re:Anime
-</a>
-
+<body class="watchlist-page">
 
 <!-- Header block for title + subtitle -->
-<div class="watchlist-header"> <!-- centers title + subtitle -->
+<div class="watchlist-header">
   <h1 class="watchlist-main-title">WATCHLIST</h1> <!-- red manga title -->
-  <div id="watchlist" class="watchlist-grid"><!-- JS fills this --></div>
-  <h2 class="watchlist-subtitle">Your saved anime</h2>
-  <div id="watchlistContainer"></div> <!-- JS will fill this -->
+
+  <div class="circle-text-wrapper">
+    <svg class="circle-text" viewBox="0 0 500 350">
+      <defs>
+        <!-- INSIDE-TOP ARC -->
+        <path
+          id="innerTopArc"
+          d="
+          M 120 300
+          A 120 45 0 0 1 380 300
+        "
+        />
+      </defs>
+
+      <text class="curved-no-saved">
+        <textPath
+          href="#innerTopArc"
+          startOffset="50%"
+          text-anchor="middle"
+          textLength="280"
+          lengthAdjust="spacingAndGlyphs"
+        >
+          No saved anime!
+        </textPath>
+      </text>
+
+
+    </svg>
+  </div>
+
 </div>
 
-<!-- Watchlist grid / empty message will appear here -->
-<div id="watchlistContainer"></div> <!-- JS fills this -->
+<!-- Watchlist grid / OR empty state (video + message) will be inserted here by JS -->
+<div id="watchlist" class="watchlist-grid">
+  <!-- js/watchlist.js will fill this -->
+</div>
 
+<!-- Script that controls this page -->
 <script src="js/watchlist.js"></script>
-</body>
 
+</body>
 </html>

@@ -23,7 +23,7 @@ h1 {
   font-size: 100px; /* Big title */
   color: #ff1b1b; /* Red title */
   text-align: center; /* Centered */
-  margin-top: -60px;
+  margin-top: -80px;
   margin-bottom: 20px;
 }
 
@@ -120,8 +120,12 @@ h3 {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   letter-spacing: 1px;
   text-transform: uppercase;
-  transition: transform 0.15s ease, box-shadow 0.15s ease,
-  background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 /* Button hover */
@@ -136,17 +140,6 @@ h3 {
 #searchButton:active {
   transform: translate(0, 0);
   box-shadow: 1px 1px 0 #660000;
-}
-
-/* Grid layout for the watchlist page */
-.watchlist-grid {
-  margin-top: 20px;                                   /* Space above the grid */
-  display: grid;                                      /* Use grid layout */
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Responsive columns */
-  gap: 16px;                                          /* Space between cards */
-  max-width: 1100px;                                  /* Same width as search results */
-  margin-left: auto;                                  /* Center horizontally */
-  margin-right: auto;
 }
 
 /* === RESULTS GRID === */
@@ -207,88 +200,6 @@ h3 {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* === MODAL (POPUP) – CLEAN MANGA STYLE === */
-
-/* Dark overlay */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7); /* Dim everything behind */
-  display: none; /* Hidden until .is-open is added */
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
-
-/* Show modal */
-.modal.is-open {
-  display: flex;
-}
-
-/* Popup box */
-.modal-content {
-  background: #ffffff;
-  position: relative;
-  border: 4px solid #000;
-  border-radius: 8px;
-
-  width: 540px;      /* ← change this for wider/narrower popup */
-  max-width: 90vw;
-  max-height: 80vh;  /* ← limit height */
-  padding: 20px;
-
-  box-shadow: 6px 6px 0 #000;
-  transform: scale(0.95) rotate(-1deg);
-  animation: popIn 0.2s ease-out forwards;
-  overflow: hidden;
-}
-
-/* Pop-in animation */
-@keyframes popIn {
-  0%   { transform: scale(0.7) rotate(-3deg); opacity: 0; }
-  100% { transform: scale(0.95) rotate(-1deg); opacity: 1; }
-}
-
-/* === MODAL (POPUP) – MANGAPLUS STYLE === */
-
-/* Dimmed background */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
-
-/* Show modal when .is-open is added */
-.modal.is-open {
-  display: flex;
-}
-
-/* Main card */
-.modal-content {
-  background: #151515;                    /* Dark card background */
-  border-radius: 20px;                    /* Soft rounded corners */
-  border: none;                           /* No comic border now */
-  width: min(900px, 90vw);                /* Max 900px, shrink on small screens */
-  max-height: 80vh;                       /* At most 80% of screen height */
-  padding: 24px 28px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6); /* Soft big shadow */
-  color: #f5f5f5;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  animation: modalFadeIn 0.2s ease-out;
-}
-
-/* Fade in + slight scale */
-@keyframes modalFadeIn {
-  0%   { opacity: 0; transform: scale(0.95); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
 /* === MODAL (POPUP) – COMIC STYLE, WHITE BACKGROUND === */
 
 /* Dimmed background */
@@ -308,27 +219,45 @@ h3 {
 
 /* Main popup card */
 .modal-content {
-  background: #ffffff;                /* WHITE background */
-  border: 4px solid #000;            /* COMIC black border */
-  border-radius: 8px;                /* Slight curve */
+  background: #ffffff;
+  border: 4px solid #000;
+  border-radius: 8px;
   width: min(900px, 90vw);
   padding: 20px 24px;
-  box-shadow: 6px 6px 0 #000;        /* Comic shadow */
+  box-shadow: 6px 6px 0 #000;
   display: flex;
   flex-direction: column;
   position: relative;
   max-height: 85vh;
   animation: popIn 0.2s ease-out;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 /* Pop animation */
 @keyframes popIn {
-  0%   { opacity: 0; transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Hover: popup tilts more + red comic shadow */
+.modal-content:hover {
+  transform: translate(-2px, -2px) rotate(-2deg);
+  box-shadow: 10px 10px 0 #ff1b1b;
+}
+
+/* Active (when clicking) */
+.modal-content:active {
+  transform: translate(0px, 0px) rotate(0deg);
+  box-shadow: 4px 4px 0 #660000;
 }
 
 /* Layout inside popup: image + text */
-/* Layout: left = image + meta, right = description */
 .modal-layout {
   display: grid;
   grid-template-columns: auto 1fr; /* left column: auto, right column: takes rest */
@@ -340,7 +269,7 @@ h3 {
 .modal-left {
   display: flex;
   flex-direction: column;
-  gap: 16px;                         /* space between image, title, info, button */
+  gap: 16px; /* space between image, title, info, button */
 }
 
 /* Cover image */
@@ -352,17 +281,19 @@ h3 {
   box-shadow: 4px 4px 0 #000;
 }
 
-/* Title under image */
+/* Title */
 .modal-title {
-  font-family: system-ui, sans-serif;
+  font-family: futura, system-ui, sans-serif;
   font-size: 20px;
-  font-weight: 700;
-  color: #000;
-  margin: 0;
   line-height: 1.2;
+  color: red;
+  margin: 0 0 8px 0;
+  max-width: 280px;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
-/* Info pill under title */
+/* Info pill */
 .modal-info {
   font-size: 13px;
   padding: 6px 10px;
@@ -376,10 +307,11 @@ h3 {
   margin: 0;
 }
 
-/* Favorite button (you already have this, keep your version if you like) */
+/* Favorite button (comic style) */
 .modal-favorite-btn {
   display: inline-block;
   margin-top: 4px;
+  margin-bottom: 4px;
   padding: 8px 14px;
   background: #ffffff;
   color: #000;
@@ -397,6 +329,11 @@ h3 {
 .modal-favorite-btn:hover {
   transform: translate(-2px, -2px) rotate(-1deg);
   box-shadow: 5px 5px 0 #ff1b1b;
+}
+
+.modal-favorite-btn:active {
+  transform: translate(0, 0) rotate(-1deg);
+  box-shadow: 1px 1px 0 #660000;
 }
 
 /* RIGHT COLUMN: description box */
@@ -422,62 +359,6 @@ h3 {
   overflow-y: auto;
 }
 
-
-/* Title */
-.modal-title {
-  font-family: system-ui, sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: #000;
-  margin: 0;
-  line-height: 1.2;
-}
-
-/* Info pill */
-.modal-info {
-  font-size: 13px;
-  padding: 6px 10px;
-  border: 3px solid #000;
-  border-radius: 6px;
-  background: #fff;
-  color: #000;
-  width: fit-content;
-  box-shadow: 3px 3px 0 #000;
-  transform: rotate(-1deg);
-  margin: 0;
-}
-
-
-/* Title */
-.modal-title {
-  font-family: futura;
-  font-size: 20px;
-  line-height: 1.2;
-  color: red;
-  margin: 0 0 8px 0;
-
-  /* ⭐ NEW: Prevent super long titles from stretching the layout */
-  max-width: 280px;       /* limit width */
-  word-wrap: break-word;  /* allow breaking inside long words */
-  white-space: normal;    /* allow text to wrap */
-}
-
-
-/* Info pill */
-.modal-info {
-  font-size: 13px;
-  padding: 6px 10px;
-  border: 3px solid #000;
-  border-radius: 6px;
-  background: #fff;
-  color: #000;
-  width: fit-content;
-  box-shadow: 3px 3px 0 #000;          /* Comic shadow */
-  transform: rotate(-1deg);
-  margin: 0;
-}
-
-
 /* Close button */
 .modal-close {
   position: absolute;
@@ -499,158 +380,43 @@ h3 {
   transform: translate(-2px, -2px);
   box-shadow: 5px 5px 0 #000;
 }
-/* Favorite button (comic-style) */
-.modal-favorite-btn {
-  display: inline-block;
-  padding: 8px 14px;
-  background: #fff;
-  color: #000;
-  border: 3px solid #000;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  width: fit-content;
 
-  box-shadow: 3px 3px 0 #000;
-  transform: rotate(-1deg);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-/* Hover */
-.modal-favorite-btn:hover {
-  transform: translate(-2px, -2px) rotate(-1deg);
-  box-shadow: 5px 5px 0 #ff1b1b;
-}
-
-/* Pressed */
-.modal-favorite-btn:active {
-  transform: translate(0,0) rotate(-1deg);
-  box-shadow: 1px 1px 0 #660000;
-}
-/* Favorite button (comic style) */
-.modal-favorite-btn {
-  display: inline-block;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  padding: 8px 14px;
-  background: #ffffff;
-  color: #000;
-  border: 3px solid #000;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  width: fit-content;
-
-  box-shadow: 3px 3px 0 #000;
-  transform: rotate(-1deg);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.modal-favorite-btn:hover {
-  transform: translate(-2px, -2px) rotate(-1deg);
-  box-shadow: 5px 5px 0 #ff1b1b;
-}
-
-.modal-favorite-btn:active {
-  transform: translate(0, 0) rotate(-1deg);
-  box-shadow: 1px 1px 0 #660000;
-}
-/* INTERACTIVE HOVER BORDER FOR THE POPUP */
-.modal-content {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-/* Hover: popup tilts more + red comic shadow */
-.modal-content:hover {
-  transform: translate(-2px, -2px) rotate(-2deg);
-  box-shadow: 10px 10px 0 #ff1b1b;   /* red manga shadow */
-}
-
-/* Active (when clicking) */
-.modal-content:active {
-  transform: translate(0px, 0px) rotate(0deg);
-  box-shadow: 4px 4px 0 #660000;     /* dark pressed shadow */
-}
-
+/* Watchlist link button */
 .watchlist-link {
   display: inline-block;
   text-decoration: none;
-  background: #000;
-  color: #ffeded;
-  padding: 10px 18px;
-  border: 3px solid #000;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 14px;
-  font-family: system-ui, sans-serif;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.85);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
-}
-
-.watchlist-link {
-  display: inline-block;
-  text-decoration: none;
-
-  background: rgba(255, 255, 255, 0.7);   /* ⭐ semi-transparent white */
-  color: #ff1b1b;                         /* ⭐ red text */
-
+  background: rgba(255, 255, 255, 0.7);
+  color: #ff1b1b;
   padding: 10px 18px;
   border: 3px solid #000;
   border-radius: 4px;
   font-weight: 700;
   font-size: 14px;
   font-family: system-ui, sans-serif;
-
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.85);
   text-transform: uppercase;
   letter-spacing: 1px;
-
-  transition: transform 0.15s ease,
-  box-shadow 0.15s ease,
-  background 0.15s ease,
-  color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
-/* Hover effect – strong red manga highlight */
-.watchlist-link:hover {
-  background: rgba(255, 27, 27, 0.85);  /* stronger red highlight */
-  color: #000;                          /* black text on hover */
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 #ff1b1b;
-}
-
-/* Press effect */
-.watchlist-link:active {
-  transform: translate(0, 0);
-  box-shadow: 2px 2px 0 rgba(0,0,0,0.8);
-}
-
-
-/* Hover effect – turns red like your search button */
-.watchlist-link:hover {
-  background: #ff1b1b;   /* red */
-  color: #000;           /* black text */
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 #ff1b1b;
-}
-
-/* Pressed */
-.watchlist-link:active {
-  transform: translate(0, 0);
-  box-shadow: 2px 2px 0 rgba(0,0,0,0.8);
-}
-
-
+/* Hover effect */
 .watchlist-link:hover {
   background: #ff1b1b;
   color: #000;
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0 #ff1b1b;
 }
+
+/* Pressed */
+.watchlist-link:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.8);
+}
+
 /* Center the subtitle + search bar */
 .hero-center {
   display: flex;
@@ -671,85 +437,60 @@ h3 {
   padding: 8px 14px;
   border-radius: 6px;
 }
+
 /* === WATCHLIST PAGE LAYOUT === */
 
-.watchlist-page {                    /* only the watchlist body */
-  padding-top: 20px;                 /* a bit less padding at top */
+/* Layout when watchlist is EMPTY (no .watchlist-grid class) */
+.watchlist-page #watchlist:not(.watchlist-grid) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 280px;  /* distance from header to video/button */
 }
 
-/* Center WATCHLIST title + subtitle */
+/* Center WATCHLIST title + curved text */
 .watchlist-header {
-  display: flex;                     /* stack elements */
-  flex-direction: column;            /* title over subtitle */
-  align-items: center;               /* center horizontally */
-  margin-top: 10px;                  /* small space from top */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0;
 }
 
 /* WATCHLIST title specifically on this page */
 .watchlist-main-title {
-  margin: -50px 0 8px 0;                 /* remove big default margin */
-  text-align: center;                /* center text */
+  margin: -10px 0 8px 0;
+  text-align: center;
 }
 
-/* "Your saved anime" label – manga style */
+/* Subtitle element (we currently keep it empty via JS, but keep styling if needed later) */
 .watchlist-subtitle {
-  display: inline-block;             /* so background hugs text */
-  padding: 170px 14px;                 /* inner space */
-  color: #ffffff;                    /* white text */
-  font-size: 18px;                   /* slightly smaller than h1 */
-  font-weight: 700;                  /* bold */
-  margin: 0;                         /* no extra gaps */
+  display: inline-block;
+  padding: 170px 14px;
+  color: #ffffff;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: -10px;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
 }
 
-/* === EMPTY WATCHLIST MESSAGE === */
-/* This styles the <p> that JS writes into #watchlistContainer when list is empty */
+/* === TAGLINE (used on main page, kept here so it still works) === */
 
-#watchlistContainer p {
-  display: inline-block;                /* shrink box to text */
-  margin-top: 20px;                     /* space under subtitle */
-  padding: 10px 16px;                   /* inner padding */
-  background: rgba(0, 0, 0, 0.75);      /* dark panel over bg */
-  color: #ffeded;                       /* soft light text */
-  border: 3px solid #ffffff;           /* white comic border */
-  border-radius: 6px;                   /* rounded corners */
-  font-weight: 600;                     /* semi-bold */
-  font-size: 14px;                      /* readable size */
-  box-shadow: 4px 4px 0 #000000;        /* strong comic shadow */
+.tagline {
+  display: inline-block;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  text-shadow: 0 0 8px rgba(255, 27, 27, 0.7);
+  animation: taglinePulse 2.4s ease-in-out infinite;
 }
 
-/* Center the empty message under the header */
-.watchlist-page #watchlistContainer {
-  max-width: 1100px;                    /* same width as main grid */
-  margin: 0 auto;                       /* center container */
-}
-/* Tagline above the search bar */
-.tagline {                                      /* the h3 with class="tagline" */
-  display: inline-block;                        /* so transform affects only the text box */
-  font-size: 22px;                              /* readable size */
-  font-weight: 700;                             /* bold text */
-  color: #ffffff;                               /* white text */
-  padding: 8px 14px;                            /* spacing around text */
-  background: rgba(0, 0, 0, 0.6);              /* dark strip behind text */
-  border-radius: 6px;                           /* soft corners */
-  text-shadow: 0 0 8px rgba(255, 27, 27, 0.7); /* red glow */
-  animation: taglinePulse 2.4s ease-in-out infinite; /* ⭐ looped animation */
-}
-
-/* Animation: small scale + glow pulse */
-@keyframes taglinePulse {
-  0% {
-    transform: scale(1);                        /* normal size */
-    text-shadow: 0 0 6px rgba(255, 27, 27, 0.4);/* soft glow */
-  }
-  50% {
-    transform: scale(1.03);                     /* tiny zoom */
-    text-shadow: 0 0 14px rgba(255, 27, 27, 1); /* strong glow */
-  }
-  100% {
-    transform: scale(1);                        /* back to normal */
-    text-shadow: 0 0 6px rgba(255, 27, 27, 0.4);/* soft glow again */
-  }
-
+/* Animation: small scale and glow pulse */
 @keyframes taglinePulse {
   0% {
     transform: scale(1);
@@ -765,37 +506,87 @@ h3 {
   }
 }
 
-/* Watchlist subtitle ("Your saved anime") */
-.watchlist-subtitle {
-  text-align: center;
-  font-size: 26px;
-  font-weight: 700;
-  color: #ffffff;                         /* white text */
-  margin-top: -10px;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.8); /* readable on bg */
+/* === WATCHLIST GRID WHEN THERE ARE SAVED ITEMS === */
 
-  /* ⭐ same animation as main tagline */
-  display: inline-block;
-  animation: taglinePulse 2.4s ease-in-out infinite;
+.watchlist-grid {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)); /* 5 cards per row */
+  gap: 16px;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  justify-items: center;
 }
 
+/* === EMPTY WATCHLIST STATE (video + button) === */
+
+.watchlist-empty-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;        /* space between text, video, button */
+  margin-top: 40px; /* distance from header */
+}
+
+/* If you still use a text paragraph inside the empty state */
 .watchlist-empty {
-  text-align: center;
+  margin: 0;
   font-size: 18px;
+  font-weight: 700;
   color: #ffffff;
-  margin-top: 10px;
-  opacity: 0.9;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
-  border: none;
-}
-.empty-video {
-  width: 100px !important;     /* 💥 FORCE 300px */
-  max-width: 50% !important;  /* responsive fallback */
-  height: auto !important;     /* keep proportions */
-  display: block !important;
-  margin: 10px auto !important;
-  border-radius: 10px !important;
+  text-align: center;
 }
 
+/* The crying video */
+.empty-video {
+  display: block;
+  width: 300px;
+  max-width: 90vw;
+  border-radius: 1000px;
+  box-shadow: 4px 4px 0 #000;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* CTA button under the video */
+.watchlist-start-btn {
+  margin-top: 20px;
+}
+
+/* === CURVED HEADER TEXT OVER THE BALL === */
+
+.circle-text-wrapper {
+  position: absolute;
+  top: 200px;       /* move arc up/down relative to page */
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none; /* so SVG does not block clicks */
+}
+
+.circle-text {
+  width: 300px;     /* change this for wider/narrower arc */
+  height: 180px;    /* change this to make the arc deeper/flatter */
+}
+
+/* Curved "No saved anime" / "Your saved anime" text */
+.curved-no-saved {
+  font-family: futura, system-ui, sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  fill: #ffffff;      /* white by default */
+  letter-spacing: 3px;
+  transform-origin: center;
+  transform: scale(1);
+  transition: transform 0.2s ease, fill 0.2s ease;
+}
+
+/* Hover state when video is hovered in the empty state */
+.curved-no-saved.is-hovered {
+  fill: #ff1b1b;
+  transform: scale(1.1);
 }
