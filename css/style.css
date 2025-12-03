@@ -446,7 +446,7 @@ h3 {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 280px;  /* distance from header to video/button */
+  padding-top: 130px;  /* distance from header to video/button */
 }
 
 /* Center WATCHLIST title + curved text */
@@ -560,7 +560,7 @@ h3 {
 
 .circle-text-wrapper {
   position: absolute;
-  top: 200px;       /* move arc up/down relative to page */
+  top: 180px;       /* move arc up/down relative to page */
   left: 0;
   width: 100%;
   display: flex;
@@ -569,8 +569,8 @@ h3 {
 }
 
 .circle-text {
-  width: 300px;     /* change this for wider/narrower arc */
-  height: 180px;    /* change this to make the arc deeper/flatter */
+  width: 350px;     /* change this for wider/narrower arc */
+  height: 220px;    /* change this to make the arc deeper/flatter */
 }
 
 /* Curved "No saved anime" / "Your saved anime" text */
