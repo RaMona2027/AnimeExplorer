@@ -13,30 +13,51 @@
 </a>
 
 <h1>Re Anime</h1>
+
 <div class="hero-center">
-  <h3 class="tagline">Ready for your next anime fix?</h3> <!-- tagline = for animation -->
+  <h3 class="tagline">Ready for your next anime fix?</h3>
 
+  <!-- SEARCH BAR -->
+  <div class="search-container">
+    <input id="searchInput" type="text" placeholder="Search anime...">
+    <button id="searchButton">Search</button>
+  </div>
 
-<div class="search-container">
-  <input
-    type="text"
-    id="searchInput"
-    placeholder="Type an anime title..."
-  >
-  <button id="searchButton">DIVE IN</button>
+  <!-- FILTERS -->
+  <div class="filters-wrapper">
+    <div class="filters-label">FILTERS</div>
+
+    <div class="filters-row">
+      <select id="genreFilter" class="filter-select">
+        <option value="">Pick a vibe</option>
+        <option value="Action">Action</option>
+        <option value="Romance">Romance</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Drama">Drama</option>
+        <option value="Fantasy">Fantasy</option>
+        <option value="Horror">Horror</option>
+        <option value="Sci-Fi">Sci-Fi</option>
+        <option value="Sports">Sports</option>
+        <option value="Adventure">Adventure</option>
+        <option value="Slice of Life">Slice of Life</option>
+      </select>
+
+      <select id="yearFilter" class="filter-select">
+        <option value="">Select year</option>
+      </select>
+    </div>
+  </div>
 </div>
-</div>
 
-<div id="results"></div> <!-- Cards will appear here -->
+<div id="results"></div>
 
-<!-- Popup modal for showing a bigger card with more info -->
-<div id="mangaModal" class="modal"> <!-- Dark overlay, hidden by default -->
-  <div class="modal-content"> <!-- White popup box in the center -->
+<!-- MODAL -->
+<div id="mangaModal" class="modal">
+  <div class="modal-content">
 
-    <button id="modalClose" class="modal-close">×</button> <!-- Close button -->
+    <button id="modalClose" class="modal-close">×</button>
 
     <div class="modal-layout">
-      <!-- LEFT COLUMN: image + title + info + button -->
       <div class="modal-left">
         <img id="modalImage" class="modal-image" src="" alt="Anime cover">
 
@@ -48,18 +69,15 @@
         </button>
       </div>
 
-      <!-- RIGHT COLUMN: description -->
       <div class="modal-right">
         <p id="modalSynopsis" class="modal-synopsis"></p>
       </div>
     </div>
 
-
   </div>
 </div>
 
 <script src="js/app.js"></script>
-</body>
-</html>
 
+</body>
 </html>

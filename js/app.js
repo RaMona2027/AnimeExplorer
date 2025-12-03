@@ -1,47 +1,61 @@
-// 🌟 GET IMPORTANT HTML ELEMENTS 🌟
-// These connect your JavaScript to the elements in index.html
+// ======================================================
+// GET IMPORTANT HTML ELEMENTS
+// ======================================================
 
-const searchInput = document.getElementById("searchInput");     // Text field
-const searchButton = document.getElementById("searchButton");   // Search button
-const resultsContainer = document.getElementById("results");    // Card grid
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const resultsContainer = document.getElementById("results");
 
-// Modal elements (popup window)
-const modal = document.getElementById("mangaModal");            // Dark overlay + popup wrapper
-const modalImage = document.getElementById("modalImage");       // Big cover image in popup
-const modalTitle = document.getElementById("modalTitle");       // Title in popup
-const modalInfo = document.getElementById("modalInfo");         // Type / episodes / score line
-const modalSynopsis = document.getElementById("modalSynopsis"); // Description text in popup
-const modalClose = document.getElementById("modalClose");       // "X" close button
-const favoriteButton = document.getElementById("favoriteButton"); // "Add to Watchlist" button
+// Modal elements
+const modal = document.getElementById("mangaModal");
+const modalImage = document.getElementById("modalImage");
+const modalTitle = document.getElementById("modalTitle");
+const modalInfo = document.getElementById("modalInfo");
+const modalSynopsis = document.getElementById("modalSynopsis");
+const modalClose = document.getElementById("modalClose");
+const favoriteButton = document.getElementById("favoriteButton");
 
-let currentAnime = null;                                        // Stores data for the currently open anime
+// Stores the anime currently opened in the modal
+let currentAnime = null;
+
+// Stores all anime results from the API (for filtering)
+let currentResults = [];
 
 
-// 🌟 WHEN USER CLICKS SEARCH BUTTON
-searchButton.addEventListener("click", function () {
-  const query = searchInput.value.trim();                       // Remove extra spaces
+// ======================================================
+// SEARCH BUTTON CLICK
+// ======================================================
 
-  if (query === "") {                                           // If field is empty
-    alert("Please type an anime title before searching.");      // Show message
-    return;                                                     // Stop here
+searchButton.addEventListener("click", () => {
+  const query = searchInput.value.trim();
+
+  if (query === "") {
+    alert("Please type an anime title before searching.");
+    return;
   }
 
-  searchAnime(query);                                           // Call API with the search text
+  searchAnime(query);
 });
 
 
-// 🌟 PRESSING ENTER SHOULD ALSO SEARCH
-searchInput.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {                                  // When user presses Enter
-    searchButton.click();                                       // Pretend they clicked the button
+// ======================================================
+// ENTER KEY TRIGGERS SEARCH
+// ======================================================
+
+searchInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    searchButton.click();
   }
 });
 
 
-// 🌟 MAIN SEARCH FUNCTION 🌟
-async function searchAnime(query) {
+// ======================================================
+// MAIN SEARCH FUNCTION (FETCHES API)
+// ======================================================
 
-  // Temporary “searching” card while we wait for the API
+async function searchAnime() {
+  const query = searchInput.value.trim();
+
   resultsContainer.innerHTML = `
     <div class="result-card">
       <div class="result-title">Searching...</div>
@@ -49,20 +63,16 @@ async function searchAnime(query) {
   `;
 
   try {
-    // Fetch from Jikan API (anime search)
     const response = await fetch(
-      `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=12`
+      `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=24`
     );
 
-    if (!response.ok) {                                         // If HTTP error
-      throw new Error("Network error");
-    }
+    if (!response.ok) throw new Error("Network error");
 
-    const data = await response.json();                         // Convert to JS object
-    const animeList = data.data;                                // Actual list of anime
+    const data = await response.json();
+    currentResults = data.data || [];
 
-    // If nothing found
-    if (!animeList || animeList.length === 0) {
+    if (currentResults.length === 0) {
       resultsContainer.innerHTML = `
         <div class="result-card">
           <div class="result-title">No results found</div>
@@ -71,41 +81,10 @@ async function searchAnime(query) {
       return;
     }
 
-    // Build card HTML
-    let html = "";
-
-    animeList.forEach((anime) => {
-
-      const title = anime.title;
-      const type = anime.type || "Unknown";
-      const episodes = anime.episodes || "Unknown";
-      const score = anime.score || "N/A";
-      const image = anime.images?.jpg?.image_url || "";
-      const synopsis = anime.synopsis || "No description available.";
-
-      // Each card stores its data in data-* attributes.
-      html += `
-        <div class="result-card"
-             data-title="${escapeHtml(title)}"
-             data-image="${escapeHtml(image)}"
-             data-type="${escapeHtml(type)}"
-             data-episodes="${escapeHtml(String(episodes))}"
-             data-score="${escapeHtml(String(score))}"
-             data-synopsis="${escapeHtml(synopsis)}">
-
-          <div class="result-image-wrapper">
-            <img src="${image}" class="result-image" alt="${escapeHtml(title)}">
-          </div>
-
-          <div class="result-title">${escapeHtml(title)}</div>
-        </div>
-      `;
-    });
-
-    resultsContainer.innerHTML = html;                          // Show all cards
+    applyFilterAndRender();
 
   } catch (error) {
-    console.error("Error:", error);
+    console.error(error);
     resultsContainer.innerHTML = `
       <div class="result-card">
         <div class="result-title">Error loading results</div>
@@ -115,107 +94,168 @@ async function searchAnime(query) {
 }
 
 
-// 🌟 CLICKING A CARD OPENS THE POPUP 🌟
-resultsContainer.addEventListener("click", function (event) {
+// ======================================================
+// FILTER LOGIC
+// ======================================================
 
-  const card = event.target.closest(".result-card");            // Find the card that was clicked
-  if (!card) return;                                            // If click was not on a card, do nothing
+const filterSelect = document.getElementById("filterType");
 
-  // Save data for the currently open anime (used for watchlist)
-  currentAnime = {                                              // Create an object with this anime's data
-    title: card.dataset.title,                                  // Title of anime
-    image: card.dataset.image,                                  // Image URL
-    type: card.dataset.type,                                    // Anime type (TV, Movie, etc.)
-    episodes: card.dataset.episodes,                            // Number of episodes
-    score: card.dataset.score,                                  // MAL score
-    synopsis: card.dataset.synopsis                             // Description text
+if (filterSelect) {
+  filterSelect.addEventListener("change", applyFilterAndRender);
+}
+
+/**
+ * Filters currentResults and sends them to renderResults()
+ */
+function applyFilterAndRender() {
+  if (!filterSelect) {
+    renderResults(currentResults);
+    return;
+  }
+
+  const selectedType = filterSelect.value;
+  let filtered = currentResults;
+
+  if (selectedType !== "all") {
+    filtered = currentResults.filter(anime => anime.type === selectedType);
+  }
+
+  renderResults(filtered);
+}
+
+
+// ======================================================
+// RENDER RESULTS FUNCTION
+// ======================================================
+
+function renderResults(list) {
+  let html = "";
+
+  list.forEach(anime => {
+    const title = anime.title;
+    const type = anime.type || "Unknown";
+    const episodes = anime.episodes || "Unknown";
+    const score = anime.score || "N/A";
+    const image = anime.images?.jpg?.image_url || "";
+    const synopsis = anime.synopsis || "No description available.";
+
+    html += `
+      <div class="result-card"
+        data-title="${escapeHtml(title)}"
+        data-image="${escapeHtml(image)}"
+        data-type="${escapeHtml(type)}"
+        data-episodes="${escapeHtml(String(episodes))}"
+        data-score="${escapeHtml(String(score))}"
+        data-synopsis="${escapeHtml(synopsis)}">
+
+        <div class="result-image-wrapper">
+          <img src="${image}" class="result-image" alt="${escapeHtml(title)}">
+        </div>
+
+        <div class="result-title">${escapeHtml(title)}</div>
+      </div>
+    `;
+  });
+
+  resultsContainer.innerHTML = html;
+}
+
+
+// ======================================================
+// CLICKING ANY CARD OPENS MODAL
+// ======================================================
+
+resultsContainer.addEventListener("click", (event) => {
+  const card = event.target.closest(".result-card");
+  if (!card) return;
+
+  currentAnime = {
+    title: card.dataset.title,
+    image: card.dataset.image,
+    type: card.dataset.type,
+    episodes: card.dataset.episodes,
+    score: card.dataset.score,
+    synopsis: card.dataset.synopsis,
   };
 
-  // Fill popup with this data
-  modalTitle.textContent = currentAnime.title;                  // Set title text
-  modalImage.src = currentAnime.image;                          // Show image
+  modalTitle.textContent = currentAnime.title;
+  modalImage.src = currentAnime.image;
   modalInfo.textContent = `Type: ${currentAnime.type} · Episodes: ${currentAnime.episodes} · Score: ${currentAnime.score}`;
-  modalSynopsis.textContent = currentAnime.synopsis;            // Set description
+  modalSynopsis.textContent = currentAnime.synopsis;
 
-  // Show the popup
   modal.classList.add("is-open");
 });
 
 
-// 🌟 CLOSE POPUP BY CLICKING X
-if (modalClose) {                                               // Only if element exists
-  modalClose.addEventListener("click", function () {
-    modal.classList.remove("is-open");                          // Hide popup
+// ======================================================
+// CLOSE MODAL
+// ======================================================
+
+if (modalClose) {
+  modalClose.addEventListener("click", () => {
+    modal.classList.remove("is-open");
   });
 }
 
+modal.addEventListener("click", (event) => {
+  if (event.target === modal) {
+    modal.classList.remove("is-open");
+  }
+});
 
-// 🌟 CLOSE POPUP BY CLICKING OUTSIDE THE BOX
-modal.addEventListener("click", function (event) {
-  if (event.target === modal) {                                 // Clicked on dark overlay
-    modal.classList.remove("is-open");                          // Hide popup
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    modal.classList.remove("is-open");
   }
 });
 
 
-// 🌟 CLOSE POPUP WITH ESCAPE KEY
-document.addEventListener("keydown", function (event) {
-  if (event.key === "Escape") {                                 // When user presses Esc
-    modal.classList.remove("is-open");                          // Hide popup
-  }
-});
+// ======================================================
+// WATCHLIST LOGIC
+// ======================================================
 
-
-// 🌟 WATCHLIST: LOAD FROM LOCALSTORAGE
 function loadWatchlist() {
-  const json = localStorage.getItem("watchlist");               // Read saved JSON string
-  if (!json) return [];                                         // If nothing saved yet → empty array
   try {
-    return JSON.parse(json);                                    // Convert back to array
+    return JSON.parse(localStorage.getItem("watchlist") || "[]");
   } catch {
-    return [];                                                  // If broken data → empty array
+    return [];
   }
 }
 
-
-// 🌟 WATCHLIST: SAVE TO LOCALSTORAGE
 function saveWatchlist(list) {
-  localStorage.setItem("watchlist", JSON.stringify(list));      // Save array as JSON string
+  localStorage.setItem("watchlist", JSON.stringify(list));
 }
 
-
-// 🌟 WATCHLIST: CHECK IF ANIME IS ALREADY SAVED (by title)
 function isInWatchlist(title) {
-  const list = loadWatchlist();                                 // Get current watchlist
-  return list.some(item => item.title === title);               // true if same title exists
+  return loadWatchlist().some(item => item.title === title);
 }
 
-
-// 🌟 FAVORITES / WATCHLIST BUTTON
-if (favoriteButton) {                                           // Only if button exists
-  favoriteButton.addEventListener("click", function () {
-
-    if (!currentAnime) {                                        // If no anime is open
-      alert("Open an anime card first.");                       // Friendly message
+if (favoriteButton) {
+  favoriteButton.addEventListener("click", () => {
+    if (!currentAnime) {
+      alert("Open an anime card first.");
       return;
     }
 
-    const list = loadWatchlist();                               // Get current watchlist
+    const list = loadWatchlist();
 
-    if (isInWatchlist(currentAnime.title)) {                    // Already in list?
+    if (isInWatchlist(currentAnime.title)) {
       alert(`"${currentAnime.title}" is already in your watchlist.`);
       return;
     }
 
-    list.push(currentAnime);                                    // Add current anime to list
-    saveWatchlist(list);                                        // Save updated watchlist
+    list.push(currentAnime);
+    saveWatchlist(list);
 
-    alert(`"${currentAnime.title}" was added to your watchlist.`); // Confirmation
+    alert(`"${currentAnime.title}" was added to your watchlist.`);
   });
 }
 
 
-// Utility function that makes special characters safe for HTML
+// ======================================================
+// ESCAPE HTML UTILS
+// ======================================================
+
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -224,3 +264,4 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
