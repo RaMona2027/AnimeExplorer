@@ -80,11 +80,11 @@ h1 {
 .tagline {
   font-size: 22px;
   font-weight: 700;
-  color: red;
+  color: #ffffff;
   background: rgba(0, 0, 0, 0);
   padding: 100px 14px;
   border-radius: 6px;
-  text-shadow: 0 0 20px rgba(255, 27, 27, 0.7);
+  text-shadow: 20 20 20px rgba(255, 27, 27, 0.7);
   animation: taglinePulse 2.4s ease-in-out infinite;
 }
 
