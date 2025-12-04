@@ -6,6 +6,9 @@ const searchInput = document.getElementById("searchInput");
 const searchButton = document.getElementById("searchButton");
 const resultsContainer = document.getElementById("results");
 
+// Filters
+const genreFilter = document.getElementById("genreFilter");
+
 // Modal elements
 const modal = document.getElementById("mangaModal");
 const modalImage = document.getElementById("modalImage");
@@ -28,13 +31,15 @@ let currentResults = [];
 
 searchButton.addEventListener("click", () => {
   const query = searchInput.value.trim();
+  const selectedGenre = genreFilter ? genreFilter.value : "";
 
-  if (query === "") {
-    alert("Please type an anime title before searching.");
+  // Only block if BOTH are empty
+  if (query === "" && !selectedGenre) {
+    alert("Type a title or pick a vibe before searching.");
     return;
   }
 
-  searchAnime(query);
+  searchAnime();
 });
 
 
@@ -63,9 +68,13 @@ async function searchAnime() {
   `;
 
   try {
-    const response = await fetch(
-      `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=24`
-    );
+    // Build URL so that query is optional
+    let url = "https://api.jikan.moe/v4/anime?limit=24";
+    if (query) {
+      url += `&q=${encodeURIComponent(query)}`;
+    }
+
+    const response = await fetch(url);
 
     if (!response.ok) throw new Error("Network error");
 
@@ -81,7 +90,8 @@ async function searchAnime() {
       return;
     }
 
-    applyFilterAndRender();
+    // Always apply the vibe filter after fetching
+    applyGenreFilter();
 
   } catch (error) {
     console.error(error);
@@ -94,34 +104,38 @@ async function searchAnime() {
 }
 
 
+
 // ======================================================
-// FILTER LOGIC
+// GENRE FILTER ("Pick a Vibe")
 // ======================================================
 
-const filterSelect = document.getElementById("filterType");
-
-if (filterSelect) {
-  filterSelect.addEventListener("change", applyFilterAndRender);
+if (genreFilter) {
+  genreFilter.addEventListener("change", applyGenreFilter);
 }
 
-/**
- * Filters currentResults and sends them to renderResults()
- */
-function applyFilterAndRender() {
-  if (!filterSelect) {
+function applyGenreFilter() {
+  if (!Array.isArray(currentResults) || currentResults.length === 0) {
+    renderResults([]);
+    return;
+  }
+
+  const selectedGenre = genreFilter ? genreFilter.value : "";
+
+  // If no vibe selected → show all current results
+  if (!selectedGenre) {
     renderResults(currentResults);
     return;
   }
 
-  const selectedType = filterSelect.value;
-  let filtered = currentResults;
-
-  if (selectedType !== "all") {
-    filtered = currentResults.filter(anime => anime.type === selectedType);
-  }
+  // Filter by genre name (from Jikan API)
+  const filtered = currentResults.filter(anime =>
+    Array.isArray(anime.genres) &&
+    anime.genres.some(g => g.name === selectedGenre)
+  );
 
   renderResults(filtered);
 }
+
 
 
 // ======================================================
@@ -129,6 +143,15 @@ function applyFilterAndRender() {
 // ======================================================
 
 function renderResults(list) {
+  if (!list || list.length === 0) {
+    resultsContainer.innerHTML = `
+      <div class="result-card">
+        <div class="result-title">No results found</div>
+      </div>
+    `;
+    return;
+  }
+
   let html = "";
 
   list.forEach(anime => {
@@ -161,6 +184,7 @@ function renderResults(list) {
 }
 
 
+
 // ======================================================
 // CLICKING ANY CARD OPENS MODAL
 // ======================================================
@@ -187,6 +211,7 @@ resultsContainer.addEventListener("click", (event) => {
 });
 
 
+
 // ======================================================
 // CLOSE MODAL
 // ======================================================
@@ -208,6 +233,7 @@ document.addEventListener("keydown", (event) => {
     modal.classList.remove("is-open");
   }
 });
+
 
 
 // ======================================================
@@ -252,6 +278,7 @@ if (favoriteButton) {
 }
 
 
+
 // ======================================================
 // ESCAPE HTML UTILS
 // ======================================================
@@ -264,4 +291,3 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
-

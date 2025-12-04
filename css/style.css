@@ -22,6 +22,31 @@ body {
   background-attachment: fixed;
 }
 
+/* Back button on watchlist page */
+.back-to-main {
+  position: fixed;       /* locks it to the corner */
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ff1b1b;
+  color: #ff1b1b;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: system-ui, sans-serif;
+
+  transition: 0.2s ease-in-out;
+}
+
+.back-to-main:hover {
+  background: #ff1b1b;
+  color: black;
+}
+
+
 /* Main site title */
 h1 {
   font-family: "MangaFont", system-ui, sans-serif;
@@ -306,12 +331,25 @@ h1 {
 }
 
 .modal-title {
-  font-family: futura, system-ui, sans-serif;
-  font-size: 20px;
-  line-height: 1.2;
+  font-size: 22px;
   color: red;
-  margin: 0 0 8px 0;
+  font-weight: 800;
+  text-align: left;
+  margin: 12px 0;
+
+  /* Allow wrapping */
+  white-space: normal;
+
+  /* Break long titles correctly */
+  overflow-wrap: break-word;
+  word-break: break-word;
+
+  line-height: 1.2;
+  max-width: 90%; /* keeps it from being too wide */
+  margin-left: auto;
+  margin-right: auto;
 }
+
 
 .modal-info {
   font-size: 13px;
@@ -480,4 +518,29 @@ h1 {
   margin-left: auto;
   margin-right: auto;
   justify-items: center;
+}
+/* Shared red anime-style button */
+.btn-red {
+  display: inline-block;
+  padding: 12px 22px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 3px solid black;
+  border-radius: 8px;
+  color: red;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 1px;
+  font-family: futura, system-ui, sans-serif;
+
+  box-shadow: 4px 4px 0 black;
+  transition: transform 0.1s ease-in-out;
+}
+
+.btn-red:hover {
+  transform: translateY(-2px);
+  color: black;
+  background: red;
+  box-shadow: 6px 6px 0 red;
 }
