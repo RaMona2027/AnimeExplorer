@@ -24,64 +24,96 @@ let currentAnime = null;
 // Stores all anime results from the API (for filtering)
 let currentResults = [];
 
-
 // ======================================================
 // SEARCH BUTTON CLICK
 // ======================================================
 
-searchButton.addEventListener("click", () => {
-  const query = searchInput.value.trim();
-  const selectedGenre = genreFilter ? genreFilter.value : "";
+if (searchButton && searchInput) {
+  searchButton.addEventListener("click", () => {
+    const query = searchInput.value.trim();
+    const selectedGenre = genreFilter ? genreFilter.value : "";
 
-  // Only block if BOTH are empty
-  if (query === "" && !selectedGenre) {
-    alert("Type a title or pick a vibe before searching.");
-    return;
-  }
+    // Allow search if there is EITHER text OR a vibe selected
+    if (query === "" && !selectedGenre) {
+      alert("Type a title or pick a vibe before searching.");
+      return;
+    }
 
-  searchAnime();
-});
+    searchAnime();
+  });
 
-
-// ======================================================
-// ENTER KEY TRIGGERS SEARCH
-// ======================================================
-
-searchInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    searchButton.click();
-  }
-});
-
+  // ENTER KEY TRIGGERS SEARCH
+  searchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      searchButton.click();
+    }
+  });
+}
 
 // ======================================================
-// MAIN SEARCH FUNCTION (FETCHES API)
+// MAIN SEARCH FUNCTION (AniList GraphQL)
 // ======================================================
 
 async function searchAnime() {
-  const query = searchInput.value.trim();
+  const query = searchInput ? searchInput.value.trim() : "";
 
+  // Show loading state
   resultsContainer.innerHTML = `
     <div class="result-card">
       <div class="result-title">Searching...</div>
     </div>
   `;
 
+  const url = "https://graphql.anilist.co";
+
+  const graphQuery = `
+    query ($search: String) {
+      Page(page: 1, perPage: 30) {
+        media(type: ANIME, search: $search) {
+          id
+          title {
+            romaji
+            english
+          }
+          episodes
+          genres
+          averageScore
+          description(asHtml: false)
+          coverImage {
+            large
+          }
+          format
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    search: query || null, // null = no text filter, just general list
+  };
+
   try {
-    // Build URL so that query is optional
-    let url = "https://api.jikan.moe/v4/anime?limit=24";
-    if (query) {
-      url += `&q=${encodeURIComponent(query)}`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify({
+        query: graphQuery,
+        variables: variables,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Network error");
     }
 
-    const response = await fetch(url);
+    const json = await response.json();
+    const page = json.data?.Page;
+    currentResults = page?.media || [];
 
-    if (!response.ok) throw new Error("Network error");
-
-    const data = await response.json();
-    currentResults = data.data || [];
-
-    if (currentResults.length === 0) {
+    if (!currentResults.length) {
       resultsContainer.innerHTML = `
         <div class="result-card">
           <div class="result-title">No results found</div>
@@ -90,9 +122,8 @@ async function searchAnime() {
       return;
     }
 
-    // Always apply the vibe filter after fetching
+    // Apply vibe filter after fetch
     applyGenreFilter();
-
   } catch (error) {
     console.error(error);
     resultsContainer.innerHTML = `
@@ -103,8 +134,6 @@ async function searchAnime() {
   }
 }
 
-
-
 // ======================================================
 // GENRE FILTER ("Pick a Vibe")
 // ======================================================
@@ -114,36 +143,32 @@ if (genreFilter) {
 }
 
 function applyGenreFilter() {
-  if (!Array.isArray(currentResults) || currentResults.length === 0) {
+  if (!currentResults || !currentResults.length) {
     renderResults([]);
     return;
   }
 
   const selectedGenre = genreFilter ? genreFilter.value : "";
 
-  // If no vibe selected → show all current results
   if (!selectedGenre) {
     renderResults(currentResults);
     return;
   }
 
-  // Filter by genre name (from Jikan API)
-  const filtered = currentResults.filter(anime =>
+  const filtered = currentResults.filter((anime) =>
     Array.isArray(anime.genres) &&
-    anime.genres.some(g => g.name === selectedGenre)
+    anime.genres.some((g) => g === selectedGenre)
   );
 
   renderResults(filtered);
 }
-
-
 
 // ======================================================
 // RENDER RESULTS FUNCTION
 // ======================================================
 
 function renderResults(list) {
-  if (!list || list.length === 0) {
+  if (!list || !list.length) {
     resultsContainer.innerHTML = `
       <div class="result-card">
         <div class="result-title">No results found</div>
@@ -154,13 +179,22 @@ function renderResults(list) {
 
   let html = "";
 
-  list.forEach(anime => {
-    const title = anime.title;
-    const type = anime.type || "Unknown";
-    const episodes = anime.episodes || "Unknown";
-    const score = anime.score || "N/A";
-    const image = anime.images?.jpg?.image_url || "";
-    const synopsis = anime.synopsis || "No description available.";
+  list.forEach((anime) => {
+    const title =
+      anime.title?.english ||
+      anime.title?.romaji ||
+      "Untitled";
+
+    const type = anime.format || "Unknown";
+    const episodes = anime.episodes ?? "Unknown";
+    const score = anime.averageScore ?? "N/A";
+    const image = anime.coverImage?.large || "";
+    const rawSynopsis = anime.description || "No description available.";
+
+    // STEP 1: keep <br> etc. but make it safe for a data-attribute
+    const synopsisForAttr = encodeForDataAttr(
+      rawSynopsis.replace(/\n/g, " ")
+    );
 
     html += `
       <div class="result-card"
@@ -169,7 +203,7 @@ function renderResults(list) {
         data-type="${escapeHtml(type)}"
         data-episodes="${escapeHtml(String(episodes))}"
         data-score="${escapeHtml(String(score))}"
-        data-synopsis="${escapeHtml(synopsis)}">
+        data-synopsis="${synopsisForAttr}">
 
         <div class="result-image-wrapper">
           <img src="${image}" class="result-image" alt="${escapeHtml(title)}">
@@ -183,58 +217,61 @@ function renderResults(list) {
   resultsContainer.innerHTML = html;
 }
 
-
-
 // ======================================================
 // CLICKING ANY CARD OPENS MODAL
 // ======================================================
 
-resultsContainer.addEventListener("click", (event) => {
-  const card = event.target.closest(".result-card");
-  if (!card) return;
+if (resultsContainer && modal) {
+  resultsContainer.addEventListener("click", (event) => {
+    const card = event.target.closest(".result-card");
+    if (!card) return;
 
-  currentAnime = {
-    title: card.dataset.title,
-    image: card.dataset.image,
-    type: card.dataset.type,
-    episodes: card.dataset.episodes,
-    score: card.dataset.score,
-    synopsis: card.dataset.synopsis,
-  };
+    currentAnime = {
+      title: card.dataset.title,
+      image: card.dataset.image,
+      type: card.dataset.type,
+      episodes: card.dataset.episodes,
+      score: card.dataset.score,
+      synopsis: card.dataset.synopsis,
+    };
 
-  modalTitle.textContent = currentAnime.title;
-  modalImage.src = currentAnime.image;
-  modalInfo.textContent = `Type: ${currentAnime.type} · Episodes: ${currentAnime.episodes} · Score: ${currentAnime.score}`;
-  modalSynopsis.textContent = currentAnime.synopsis;
+    modalTitle.textContent = currentAnime.title;
+    modalImage.src = currentAnime.image;
+    modalInfo.textContent = `Type: ${currentAnime.type} · Episodes: ${currentAnime.episodes} · Score: ${currentAnime.score}`;
 
-  modal.classList.add("is-open");
-});
+    // STEP 2: use innerHTML so <br> etc. become real line breaks
+    modalSynopsis.innerHTML = currentAnime.synopsis;
 
+    modal.classList.add("is-open");
 
+    // make sure the add button is visible on the main page modal
+    if (favoriteButton) {
+      favoriteButton.style.display = "inline-block";
+    }
+  });
+}
 
 // ======================================================
 // CLOSE MODAL
 // ======================================================
 
-if (modalClose) {
+if (modal && modalClose) {
   modalClose.addEventListener("click", () => {
     modal.classList.remove("is-open");
   });
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.classList.remove("is-open");
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      modal.classList.remove("is-open");
+    }
+  });
 }
-
-modal.addEventListener("click", (event) => {
-  if (event.target === modal) {
-    modal.classList.remove("is-open");
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    modal.classList.remove("is-open");
-  }
-});
-
-
 
 // ======================================================
 // WATCHLIST LOGIC
@@ -253,31 +290,32 @@ function saveWatchlist(list) {
 }
 
 function isInWatchlist(title) {
-  return loadWatchlist().some(item => item.title === title);
+  return loadWatchlist().some((item) => item.title === title);
 }
 
 if (favoriteButton) {
   favoriteButton.addEventListener("click", () => {
     if (!currentAnime) {
-      alert("Open an anime card first.");
+      // was: alert("Open an anime card first.");
+      showToast("Open a card first.");
       return;
     }
 
     const list = loadWatchlist();
 
     if (isInWatchlist(currentAnime.title)) {
-      alert(`"${currentAnime.title}" is already in your watchlist.`);
+      // was: alert(`"${currentAnime.title}" is already in your watchlist.`);
+      showToast("Already in watchlist.");
       return;
     }
 
     list.push(currentAnime);
     saveWatchlist(list);
 
-    alert(`"${currentAnime.title}" was added to your watchlist.`);
+    // custom comic-style popup instead of browser alert
+    showToast("Added to watchlist.");
   });
 }
-
-
 
 // ======================================================
 // ESCAPE HTML UTILS
@@ -290,4 +328,36 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+/**
+ * Encode text so it is safe inside a data-* attribute
+ * but still allows HTML tags like <br> to work later.
+ */
+function encodeForDataAttr(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// ======================================================
+// TOAST POPUP HELPER
+// ======================================================
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  // clear previous timeout if user clicks very fast
+  if (showToast._timeoutId) {
+    clearTimeout(showToast._timeoutId);
+  }
+
+  showToast._timeoutId = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
 }

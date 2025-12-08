@@ -1,8 +1,8 @@
-<!DOCTYPE html> <!-- Tells the browser this is an HTML5 page -->
-<html lang="en"> <!-- Page language is English -->
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8"> <!-- Handles å, ä, ö, emojis etc -->
-  <title>Anime Watchlist</title> <!-- Title in the browser tab -->
+  <meta charset="UTF-8">
+  <title>Anime Watchlist</title>
 
   <!-- Main shared stylesheet -->
   <link rel="stylesheet" href="css/style.css">
@@ -12,22 +12,21 @@
 
 <a href="index.html" class="btn-red back-btn">← Back to main page</a>
 
-
-
-<!-- Header block for title + subtitle -->
+<!-- Header block for title + (conditional) empty-state text -->
 <div class="watchlist-header">
-  <h1 class="watchlist-main-title">WATCHLIST</h1> <!-- red manga title -->
+  <h1 class="watchlist-main-title">WATCHLIST</h1>
 
-  <div class="circle-text-wrapper">
+  <!-- This wrapper will be shown/hidden by JS depending on if watchlist is empty -->
+  <div class="circle-text-wrapper" id="emptyBanner">
     <svg class="circle-text" viewBox="0 0 500 350">
       <defs>
         <!-- INSIDE-TOP ARC -->
         <path
           id="innerTopArc"
           d="
-          M 120 200
-          A 120 45 0 0 1 380 200
-        "
+              M 120 200
+              A 120 45 0 0 1 380 200
+            "
         />
       </defs>
 
@@ -42,16 +41,38 @@
           No saved anime!
         </textPath>
       </text>
-
-
     </svg>
   </div>
-
 </div>
 
-<!-- Watchlist grid / OR empty state (video + message) will be inserted here by JS -->
+<!-- Watchlist grid (cards will be inserted here by JS) -->
 <div id="watchlist" class="watchlist-grid">
   <!-- js/watchlist.js will fill this -->
+</div>
+
+<!-- MODAL (same structure as on main page, needed to open saved cards) -->
+<div id="mangaModal" class="modal">
+  <div class="modal-content">
+    <button id="modalClose" class="modal-close">×</button>
+
+    <div class="modal-layout">
+      <div class="modal-left">
+        <img id="modalImage" class="modal-image" src="" alt="Anime cover">
+
+        <h2 id="modalTitle" class="modal-title"></h2>
+        <p id="modalInfo" class="modal-info"></p>
+
+        <!-- You can keep this text or change it to "Remove from Watchlist" later in JS -->
+        <button id="favoriteButton" class="modal-favorite-btn">
+          Add to Watchlist
+        </button>
+      </div>
+
+      <div class="modal-right">
+        <p id="modalSynopsis" class="modal-synopsis"></p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Script that controls this page -->

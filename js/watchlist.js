@@ -3,10 +3,24 @@
 // Grid container where cards OR empty state will be shown
 const watchlistContainer = document.getElementById("watchlist");
 
-// Subtitle heading ("Your saved anime" / empty when none)
+// Subtitle heading (if it exists in your HTML, otherwise this stays null)
 const watchlistSubtitle = document.querySelector(".watchlist-subtitle");
 
-// Load watchlist array from localStorage
+// Curved text on the sphere: <text class="curved-no-saved"><textPath>...</textPath></text>
+const curvedTextPath = document.querySelector(".curved-no-saved textPath");
+
+// Modal elements (same IDs as on index.html)
+const modal = document.getElementById("mangaModal");
+const modalImage = document.getElementById("modalImage");
+const modalTitle = document.getElementById("modalTitle");
+const modalInfo = document.getElementById("modalInfo");
+const modalSynopsis = document.getElementById("modalSynopsis");
+const modalClose = document.getElementById("modalClose");
+
+// ---------------------------
+// LOAD / SAVE WATCHLIST
+// ---------------------------
+
 function loadWatchlist() {
   const json = localStorage.getItem("watchlist");
   if (!json) return [];
@@ -19,34 +33,29 @@ function loadWatchlist() {
   }
 }
 
-// Save watchlist array back to localStorage
 function saveWatchlist(list) {
   localStorage.setItem("watchlist", JSON.stringify(list));
 }
 
-// Render the watchlist page (shows either cards OR empty state)
+// ---------------------------
+// RENDER WATCHLIST
+// ---------------------------
+
 function renderWatchlist() {
   const list = loadWatchlist();
 
-  // Curved text on the sphere: <text class="curved-no-saved"><textPath>...</textPath></text>
-  const curvedTextPath = document.querySelector(".curved-no-saved textPath");
-
   // CASE 1: NO SAVED ANIME
   if (!list || list.length === 0) {
-    // Subtitle under WATCHLIST – keep as it was
     if (watchlistSubtitle) {
-      watchlistSubtitle.textContent = "No saved anime yet";
+      watchlistSubtitle.textContent = "";
     }
 
-    // Curved text should say "No saved anime!"
     if (curvedTextPath) {
       curvedTextPath.textContent = "No saved anime!";
     }
 
-    // Turn off grid layout for empty state
     watchlistContainer.classList.remove("watchlist-grid");
 
-    // Empty state: video + button
     watchlistContainer.innerHTML = `
       <div class="watchlist-empty-wrapper">
         <video class="empty-video" autoplay loop muted playsinline>
@@ -60,13 +69,12 @@ function renderWatchlist() {
       </div>
     `;
 
-    // Hover interaction: video controls curved text
     const curvedText = document.querySelector(".curved-no-saved");
     const emptyVideo = watchlistContainer.querySelector(".empty-video");
 
     if (curvedText && emptyVideo) {
       emptyVideo.addEventListener("mouseenter", () => {
-        curvedText.classList.add("is-hovered");   // or is-pulsing if that's what your CSS uses
+        curvedText.classList.add("is-hovered");
       });
 
       emptyVideo.addEventListener("mouseleave", () => {
@@ -74,29 +82,27 @@ function renderWatchlist() {
       });
     }
 
-    return; // stop here, do not render cards
+    return;
   }
 
-  // CASE 2: THERE ARE SAVED ANIME
+  // CASE 2: WE HAVE SAVED ANIME
 
-  // Subtitle under WATCHLIST
   if (watchlistSubtitle) {
-    watchlistSubtitle.textContent = "Your saved anime";
+    watchlistSubtitle.textContent = "";
   }
 
-  // Curved text should say "Your saved anime"
+// Remove curved text entirely when list is not empty
   if (curvedTextPath) {
-    curvedTextPath.textContent = "Your saved anime";
+    curvedTextPath.textContent = "";
   }
 
-  // Use grid layout when we have cards
+
   watchlistContainer.classList.add("watchlist-grid");
 
-  // Build all cards
   const cardsHtml = list
     .map(
       (anime, index) => `
-      <div class="result-card">
+      <div class="result-card" data-index="${index}">
         <div class="result-image-wrapper">
           <img
             src="${anime.image}"
@@ -123,21 +129,73 @@ function renderWatchlist() {
     .join("");
 
   watchlistContainer.innerHTML = cardsHtml;
+}
 
-  // Hook up "Remove" buttons
-  const removeButtons = document.querySelectorAll(".remove-btn");
+// Initial render on page load
+renderWatchlist();
 
-  removeButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const idx = Number(button.dataset.index);
+// ======================================================
+// CLICK HANDLING (Remove button + open modal on card click)
+// ======================================================
+
+watchlistContainer.addEventListener("click", (event) => {
+  const list = loadWatchlist();
+
+  // 1) Remove button
+  const removeBtn = event.target.closest(".remove-btn");
+  if (removeBtn) {
+    const idx = Number(removeBtn.dataset.index);
+    if (!Number.isNaN(idx)) {
       const current = loadWatchlist();
       current.splice(idx, 1);
       saveWatchlist(current);
-      renderWatchlist(); // re-render UI
+      renderWatchlist();
+    }
+    return; // stop here so we don't also open modal
+  }
+
+  // 2) Card click → open modal
+  const card = event.target.closest(".result-card");
+  if (!card || !modal) return;
+
+  const idx = Number(card.dataset.index);
+  const anime = list[idx];
+  if (!anime) return;
+
+  modalTitle.textContent = anime.title;
+  modalImage.src = anime.image;
+  modalInfo.textContent = `Type: ${anime.type} · Episodes: ${anime.episodes} · Score: ${anime.score}`;
+
+  // IMPORTANT: use innerHTML here so stored <br> renders correctly
+  modalSynopsis.innerHTML = anime.synopsis || "No description available.";
+// Hide Add-to-Watchlist button on the watchlist page
+  if (favoriteButton) {
+    favoriteButton.style.display = "none";
+  }
+
+  modal.classList.add("is-open");
+});
+
+// ======================================================
+// CLOSE MODAL
+// ======================================================
+
+if (modal) {
+  if (modalClose) {
+    modalClose.addEventListener("click", () => {
+      modal.classList.remove("is-open");
     });
+  }
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.classList.remove("is-open");
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      modal.classList.remove("is-open");
+    }
   });
 }
-
-
-// Run once on page load
-renderWatchlist();

@@ -3,6 +3,12 @@
    Base fonts, layout, buttons, inputs, grid behavior
    ============================================================ */
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* Custom manga title font */
 @font-face {
   font-family: "MangaFont";
@@ -22,7 +28,7 @@ body {
   background-attachment: fixed;
 }
 
-/* Back button on watchlist page */
+/* Back button (old class, keep in case it's used somewhere) */
 .back-to-main {
   position: fixed;       /* locks it to the corner */
   top: 20px;
@@ -46,6 +52,13 @@ body {
   color: black;
 }
 
+/* Back button in watchlist.html: <a class="btn-red back-btn"> */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
 
 /* Main site title */
 h1 {
@@ -88,6 +101,32 @@ h1 {
   box-shadow: 2px 2px 0 rgba(0,0,0,0.8);
 }
 
+/* Shared red anime-style button */
+.btn-red {
+  display: inline-block;
+  padding: 12px 22px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 3px solid black;
+  border-radius: 8px;
+  color: red;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 1px;
+  font-family: futura, system-ui, sans-serif;
+
+  box-shadow: 4px 4px 0 black;
+  transition: transform 0.1s ease-in-out;
+}
+
+.btn-red:hover {
+  transform: translateY(-2px);
+  color: black;
+  background: red;
+  box-shadow: 6px 6px 0 red;
+}
+
 /* ============================================================
    SEARCH PAGE STYLES
    Search bar, filters, responsive results grid, cards, modal
@@ -109,15 +148,24 @@ h1 {
   background: rgba(0, 0, 0, 0);
   padding: 100px 14px;
   border-radius: 6px;
-  text-shadow: 20 20 20px rgba(255, 27, 27, 0.7);
+  text-shadow: 0 0 20px rgba(255, 27, 27, 0.7);
   animation: taglinePulse 2.4s ease-in-out infinite;
 }
 
 /* Pulse animation */
 @keyframes taglinePulse {
-  0% { transform: scale(1); text-shadow: 0 0 6px rgba(255,27,27,0.4); }
-  50% { transform: scale(1.03); text-shadow: 0 0 14px rgba(255,27,27,1); }
-  100% { transform: scale(1); text-shadow: 0 0 6px rgba(255,27,27,0.4); }
+  0% {
+    transform: scale(1);
+    text-shadow: 0 0 6px rgba(255,27,27,0.4);
+  }
+  50% {
+    transform: scale(1.03);
+    text-shadow: 0 0 14px rgba(255,27,27,1);
+  }
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 6px rgba(255,27,27,0.4);
+  }
 }
 
 /* --- Search bar --- */
@@ -173,9 +221,24 @@ h1 {
   color: #000;
 }
 
-/* --- Filter dropdown row --- */
-.filter-row {
+/* --- Filters wrapper + label (matches your HTML) --- */
+.filters-wrapper {
   margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filters-label {
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* --- Filter dropdown row --- */
+.filters-row {
+  margin-top: 4px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -184,7 +247,8 @@ h1 {
   font-size: 14px;
 }
 
-.filter-row select {
+/* Match your <select class="filter-select"> */
+.filter-select {
   padding: 6px 10px;
   border-radius: 4px;
   border: 2px solid #000;
@@ -192,6 +256,13 @@ h1 {
   font-family: system-ui;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.7);
   cursor: pointer;
+}
+
+.filter-select:hover {
+  transform: translate(-2px,-2px);
+  box-shadow: 5px 5px 0 #ff1b1b;
+  background: #ff1b1b;
+  color: #000;
 }
 
 /* --- Responsive results grid --- */
@@ -243,6 +314,11 @@ h1 {
   font-weight: 700;
   color: #111;
   text-align: center;
+
+  /* allow long titles to wrap over several rows */
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* ============================================================
@@ -263,17 +339,20 @@ h1 {
   display: flex;
 }
 
-/* White popup box */
+/* White popup box – CONSISTENT PADDING */
 .modal-content {
   background: #ffffff;
   border: 4px solid #000;
   border-radius: 8px;
   width: min(900px, 90vw);
-  padding: 20px 24px;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
   position: relative;
+
+  /* consistent inner padding around everything */
+  padding: 20px;
+  box-sizing: border-box;
 
   /* POP-IN ANIMATION (when opened) */
   animation: popIn 0.2s ease-out;
@@ -306,13 +385,13 @@ h1 {
   }
 }
 
-/* === MODAL GRID LAYOUT (this was missing!) === */
+/* === MODAL GRID LAYOUT – columns same height === */
 .modal-layout {
   display: grid;
   grid-template-columns: auto 1fr;
-  column-gap: 16px;
-  align-items: flex-start;
-  margin-top: 10px;
+  column-gap: 20px;
+  align-items: stretch;
+  flex: 1;               /* fill the modal vertically */
 }
 
 /* Left column */
@@ -320,6 +399,8 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 10px 0 10px 0;
+  box-sizing: border-box;
 }
 
 .modal-image {
@@ -335,7 +416,7 @@ h1 {
   color: red;
   font-weight: 800;
   text-align: left;
-  margin: 12px 0;
+  margin: 0;   /* spacing handled by gap in .modal-left */
 
   /* Allow wrapping */
   white-space: normal;
@@ -350,7 +431,6 @@ h1 {
   margin-right: auto;
 }
 
-
 .modal-info {
   font-size: 13px;
   padding: 6px 10px;
@@ -364,7 +444,7 @@ h1 {
   margin: 0;
 }
 
-/* Add-to-watchlist button */
+/* Add-to-watchlist button – STUCK TO BOTTOM OF LEFT COLUMN */
 .modal-favorite-btn {
   padding: 8px 14px;
   border: 3px solid #000;
@@ -378,6 +458,10 @@ h1 {
   box-shadow: 3px 3px 0 #000;
   transform: rotate(-1deg);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  margin-top: auto;      /* pushes button to the bottom */
+  margin-bottom: 0;
+  align-self: flex-start;
 }
 
 .modal-favorite-btn:hover {
@@ -406,7 +490,7 @@ h1 {
   padding: 10px;
   box-shadow: 3px 3px 0 #000;
 
-  /* RESTORED COMIC TILT */
+  /* COMIC TILT */
   transform: rotate(1deg);
 
   max-height: 50vh;
@@ -434,6 +518,36 @@ h1 {
   box-shadow: 5px 5px 0 #000;
 }
 
+/* ============================
+   COMIC-STYLE TOAST POPUP
+   ============================ */
+
+.toast {
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  padding: 20px 30px;
+  background: #ffffff;
+  border: 3px solid #000;
+  border-radius: 6px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+  box-shadow: 5px 5px 0 #ff1b1b;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;  /* make sure toast is above the modal */
+
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) scale(1) rotate(-1deg);
+}
 
 /* ============================================================
    WATCHLIST PAGE STYLES
@@ -476,13 +590,30 @@ h1 {
   font-weight: 700;
   fill: #ffffff;
   letter-spacing: 3px;
+  transform-origin: 50% 50%;
   transition: transform 0.2s ease, fill 0.2s ease;
+
+  /* gentle idle breathing animation */
+  animation: curvedIdle 4s ease-in-out infinite;
 }
 
-/* Hover animation when video hovered */
+/* When video (or wrapper) is hovered – stronger interaction */
 .curved-no-saved.is-hovered {
   fill: #ff1b1b;
-  transform: scale(1);
+  transform: scale(2.0) rotate(-2deg);
+}
+
+/* Idle breathing */
+@keyframes curvedIdle {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Empty-state column layout */
@@ -519,28 +650,22 @@ h1 {
   margin-right: auto;
   justify-items: center;
 }
-/* Shared red anime-style button */
-.btn-red {
-  display: inline-block;
-  padding: 12px 22px;
-  background: rgba(255, 255, 255, 0.75);
-  border: 3px solid black;
-  border-radius: 8px;
-  color: red;
-  font-weight: 500;
-  font-size: 14px;
-  text-transform: uppercase;
-  text-decoration: none;
-  letter-spacing: 1px;
-  font-family: futura, system-ui, sans-serif;
 
-  box-shadow: 4px 4px 0 black;
-  transition: transform 0.1s ease-in-out;
+/* Watchlist remove button spacing */
+.remove-btn {
+  margin-top: 10px;        /* space above button */
+  padding: 6px 12px;
+  border: 3px solid #000;
+  background: #fff;
+  color: #000;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #000;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.btn-red:hover {
-  transform: translateY(-2px);
-  color: black;
-  background: red;
-  box-shadow: 6px 6px 0 red;
+.remove-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 #ff1b1b;
 }
