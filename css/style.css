@@ -1,6 +1,10 @@
 /* ============================================================
    GLOBAL / SHARED STYLES
    Base fonts, layout, buttons, inputs, grid behavior
+   ------------------------------------------------------------
+   This section sets the global box model, fonts and page background
+   and defines shared components like the main title and back buttons.
+   These rules affect both the search page and the watchlist page.
    ============================================================ */
 
 *,
@@ -9,13 +13,15 @@
   box-sizing: border-box;
 }
 
-/* Custom manga title font */
+/* Custom manga title font loaded from your fonts folder.
+   Used for the main site title to give it a manga-style look. */
 @font-face {
   font-family: "MangaFont";
   src: url("fonts/manga.otf") format("opentype");
 }
 
-/* Page background + base font */
+/* Base page layout: removes default margin, adds padding
+   and sets the global font, text color and fixed manga background. */
 body {
   margin: 0;
   padding: 40px 20px;
@@ -28,9 +34,10 @@ body {
   background-attachment: fixed;
 }
 
-/* Back button (old class, keep in case it's used somewhere) */
+/* Legacy back button style with full visual treatment.
+   Keep this if some pages still use .back-to-main instead of .back-btn + .btn-red. */
 .back-to-main {
-  position: fixed;       /* locks it to the corner */
+  position: fixed;
   top: 20px;
   left: 20px;
   z-index: 1000;
@@ -52,7 +59,8 @@ body {
   color: black;
 }
 
-/* Back button in watchlist.html: <a class="btn-red back-btn"> */
+/* Back button positioning used together with .btn-red.
+   This keeps the visual style reusable while fixing the button in the corner. */
 .back-btn {
   position: fixed;
   top: 20px;
@@ -60,7 +68,8 @@ body {
   z-index: 1000;
 }
 
-/* Main site title */
+/* Main site title in manga style.
+   Uses the custom font and oversized, red text centered near the top. */
 h1 {
   font-family: "MangaFont", system-ui, sans-serif;
   font-size: 100px;
@@ -70,7 +79,8 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Comic-style main action button */
+/* Comic-style main action link (for example, "Go to watchlist").
+   Looks like a button with a thick border and offset shadow for a manga panel feel. */
 .watchlist-link {
   display: inline-block;
   text-decoration: none;
@@ -85,8 +95,11 @@ h1 {
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.85);
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease,
-  background 0.15s ease, color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
 .watchlist-link:hover {
@@ -98,10 +111,11 @@ h1 {
 
 .watchlist-link:active {
   transform: translate(0, 0);
-  box-shadow: 2px 2px 0 rgba(0,0,0,0.8);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
 }
 
-/* Shared red anime-style button */
+/* Shared red comic-style button used across the app.
+   Gives all main actions a consistent manga look with bold borders and a drop shadow. */
 .btn-red {
   display: inline-block;
   padding: 12px 22px;
@@ -115,7 +129,6 @@ h1 {
   text-decoration: none;
   letter-spacing: 1px;
   font-family: futura, system-ui, sans-serif;
-
   box-shadow: 4px 4px 0 black;
   transition: transform 0.1s ease-in-out;
 }
@@ -129,10 +142,14 @@ h1 {
 
 /* ============================================================
    SEARCH PAGE STYLES
-   Search bar, filters, responsive results grid, cards, modal
+   Search bar, filters, responsive results grid, cards, titles
+   ------------------------------------------------------------
+   These styles control the search experience: center hero layout,
+   animated tagline, search input, filters, and anime result cards.
    ============================================================ */
 
-/* Container holding search bar + filters */
+/* Centers the hero content (tagline, search bar, filters) on the page.
+   Stacks items vertically and aligns them in the middle. */
 .hero-center {
   display: flex;
   flex-direction: column;
@@ -140,7 +157,8 @@ h1 {
   text-align: center;
 }
 
-/* Animated tagline text */
+/* Tagline under the main title with a subtle pulsing effect.
+   Uses text-shadow and a scale animation to draw attention. */
 .tagline {
   font-size: 22px;
   font-weight: 700;
@@ -152,23 +170,25 @@ h1 {
   animation: taglinePulse 2.4s ease-in-out infinite;
 }
 
-/* Pulse animation */
+/* Pulse animation for the tagline.
+   Gently scales text and changes glow strength over time. */
 @keyframes taglinePulse {
   0% {
     transform: scale(1);
-    text-shadow: 0 0 6px rgba(255,27,27,0.4);
+    text-shadow: 0 0 6px rgba(255, 27, 27, 0.4);
   }
   50% {
     transform: scale(1.03);
-    text-shadow: 0 0 14px rgba(255,27,27,1);
+    text-shadow: 0 0 14px rgba(255, 27, 27, 1);
   }
   100% {
     transform: scale(1);
-    text-shadow: 0 0 6px rgba(255,27,27,0.4);
+    text-shadow: 0 0 6px rgba(255, 27, 27, 0.4);
   }
 }
 
-/* --- Search bar --- */
+/* Search bar wrapper that holds the input and button.
+   Gives a comic-style card with border, padding and drop shadow. */
 .search-container {
   position: relative;
   background-color: rgba(255, 255, 255, 0.9);
@@ -182,6 +202,8 @@ h1 {
   margin-top: 20px;
 }
 
+/* Text input for search queries.
+   Uses clear borders and a light box-shadow to stand out on the card. */
 #searchInput {
   padding: 10px;
   width: 260px;
@@ -189,18 +211,21 @@ h1 {
   border: 2px solid #000;
   border-radius: 4px;
   background: #fff;
-  box-shadow: 2px 2px 0 rgba(0,0,0,0.7);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7);
   color: #111;
 }
 
+/* Focus state for the search input.
+   Highlights the field in red and slightly nudges it for a responsive feel. */
 #searchInput:focus {
   outline: none;
   border-color: #ff1b1b;
   box-shadow: 3px 3px 0 #ff1b1b;
-  transform: translate(-1px,-1px);
+  transform: translate(-1px, -1px);
 }
 
-/* --- Search button --- */
+/* Search button next to the input.
+   Designed as a dark button that turns red on hover with a comic shadow. */
 #searchButton {
   padding: 10px 18px;
   font-size: 16px;
@@ -211,17 +236,18 @@ h1 {
   color: #ffeded;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 3px 3px 0 rgba(0,0,0,0.8);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
 }
 
 #searchButton:hover {
-  transform: translate(-2px,-2px);
+  transform: translate(-2px, -2px);
   box-shadow: 5px 5px 0 #ff1b1b;
   background: #ff1b1b;
   color: #000;
 }
 
-/* --- Filters wrapper + label (matches your HTML) --- */
+/* Wrapper for the filters section below the search bar.
+   Stacks the label and the row of dropdowns and keeps them centered. */
 .filters-wrapper {
   margin-top: 12px;
   display: flex;
@@ -229,6 +255,8 @@ h1 {
   align-items: center;
 }
 
+/* Small uppercase label above the filter dropdowns.
+   Helps explain what the user is choosing without taking much space. */
 .filters-label {
   font-size: 13px;
   letter-spacing: 2px;
@@ -236,7 +264,8 @@ h1 {
   margin-bottom: 4px;
 }
 
-/* --- Filter dropdown row --- */
+/* Row of filter dropdowns (genre, vibe, etc.).
+   Aligns them horizontally with equal spacing and a clean font. */
 .filters-row {
   margin-top: 4px;
   display: flex;
@@ -247,25 +276,27 @@ h1 {
   font-size: 14px;
 }
 
-/* Match your <select class="filter-select"> */
+/* Basic style for filter dropdowns.
+   Keeps the comic look with border, shadow and a hover highlight. */
 .filter-select {
   padding: 6px 10px;
   border-radius: 4px;
   border: 2px solid #000;
   background: #ffffff;
   font-family: system-ui;
-  box-shadow: 2px 2px 0 rgba(0,0,0,0.7);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7);
   cursor: pointer;
 }
 
 .filter-select:hover {
-  transform: translate(-2px,-2px);
+  transform: translate(-2px, -2px);
   box-shadow: 5px 5px 0 #ff1b1b;
   background: #ff1b1b;
   color: #000;
 }
 
-/* --- Responsive results grid --- */
+/* Grid that holds all search result cards.
+   Uses auto-fill to create responsive columns up to a max width. */
 #results {
   margin-top: 30px;
   display: grid;
@@ -276,38 +307,45 @@ h1 {
   margin-right: auto;
 }
 
-/* --- Individual anime cards --- */
+/* Individual anime result card.
+   A clickable comic panel with border, shadow and hover lift effect. */
 .result-card {
-  background: rgba(255,255,255,0.95);
+  background: rgba(255, 255, 255, 0.95);
   border: 3px solid #000;
   border-radius: 6px;
-  box-shadow: 3px 3px 0 rgba(0,0,0,0.8);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
   padding: 8px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .result-card:hover {
-  transform: translate(-2px,-2px);
+  transform: translate(-2px, -2px);
   box-shadow: 5px 5px 0 #ff1b1b;
 }
 
+/* Wrapper that forces all thumbnails into the same 3:2 ratio.
+   Keeps your grid neat even when images have different original sizes. */
 .result-image-wrapper {
   width: 100%;
-  aspect-ratio: 3/2;
+  aspect-ratio: 3 / 2;
   border: 3px solid #000;
   border-radius: 4px;
   overflow: hidden;
 }
 
+/* Card image that fills the wrapper.
+   Uses object-fit: cover so the image crops nicely without distortion. */
 .result-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+/* Title text under the image.
+   Allows long titles to wrap over several lines instead of being cut off. */
 .result-title {
   margin-top: 8px;
   font-size: 14px;
@@ -315,31 +353,39 @@ h1 {
   color: #111;
   text-align: center;
 
-  /* allow long titles to wrap over several rows */
   white-space: normal;
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
 /* ============================================================
-   MODAL POPUP (FULL RESTORED VERSION)
+   MODAL POPUP
+   Full anime details, left/right layout, favorite button
+   ------------------------------------------------------------
+   These styles control the full-screen overlay and the popup box
+   that shows extended information about a selected anime.
    ============================================================ */
 
+/* Dark overlay that covers the entire screen when the modal is open.
+   Uses flexbox to center the popup content. */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 10;
 }
 
+/* Utility class to toggle the modal on.
+   When applied, it makes the modal visible and flexed. */
 .modal.is-open {
   display: flex;
 }
 
-/* White popup box – CONSISTENT PADDING */
+/* Main white popup box for detailed content.
+   Includes padding, a subtle pop-in animation and a comic hover effect. */
 .modal-content {
   background: #ffffff;
   border: 4px solid #000;
@@ -349,31 +395,29 @@ h1 {
   display: flex;
   flex-direction: column;
   position: relative;
-
-  /* consistent inner padding around everything */
   padding: 20px;
   box-sizing: border-box;
 
-  /* POP-IN ANIMATION (when opened) */
   animation: popIn 0.2s ease-out;
-
-  /* smooth hover transformation */
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Hover effect: comic-style tilt + red shadow */
+/* Hover effect for the modal box.
+   Slightly tilts and offsets the panel with a bold red shadow. */
 .modal-content:hover {
   transform: translate(-2px, -2px) rotate(-2deg);
   box-shadow: 10px 10px 0 #ff1b1b;
 }
 
-/* Active click state */
+/* Active state when the modal is clicked.
+   Resets the movement to make it feel like a pressed card. */
 .modal-content:active {
   transform: translate(0, 0) rotate(0deg);
   box-shadow: 4px 4px 0 #660000;
 }
 
-/* POP-IN ANIMATION KEYFRAMES */
+/* Pop-in animation when the modal appears.
+   Fades from 90% size and 0 opacity to full size and full opacity. */
 @keyframes popIn {
   0% {
     opacity: 0;
@@ -385,24 +429,28 @@ h1 {
   }
 }
 
-/* === MODAL GRID LAYOUT – columns same height === */
+/* Two-column grid inside the modal.
+   Left column holds image and core info, right column holds the synopsis. */
 .modal-layout {
   display: grid;
   grid-template-columns: auto 1fr;
   column-gap: 20px;
   align-items: stretch;
-  flex: 1;               /* fill the modal vertically */
+  flex: 1;
 }
 
-/* Left column */
+/* Left column stack: poster, title, badges and favorite button.
+   Uses gap to handle spacing instead of manual margins. */
 .modal-left {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 10px 0 10px 0;
+  padding: 10px 0;
   box-sizing: border-box;
 }
 
+/* Poster image inside the modal.
+   Fixed size with a thick border and strong shadow to match the comic style. */
 .modal-image {
   width: 240px;
   max-width: 35vw;
@@ -411,26 +459,27 @@ h1 {
   box-shadow: 4px 4px 0 #000;
 }
 
+/* Modal title above the basic info.
+   Allows long titles to wrap and keeps a comfortable line-height. */
 .modal-title {
   font-size: 22px;
   color: red;
   font-weight: 800;
   text-align: left;
-  margin: 0;   /* spacing handled by gap in .modal-left */
+  margin: 0;
 
-  /* Allow wrapping */
   white-space: normal;
-
-  /* Break long titles correctly */
   overflow-wrap: break-word;
   word-break: break-word;
 
   line-height: 1.2;
-  max-width: 90%; /* keeps it from being too wide */
+  max-width: 90%;
   margin-left: auto;
   margin-right: auto;
 }
 
+/* Small info tag (for example, type, episodes, status).
+   Styled like a comic label with a slight rotation. */
 .modal-info {
   font-size: 13px;
   padding: 6px 10px;
@@ -444,7 +493,8 @@ h1 {
   margin: 0;
 }
 
-/* Add-to-watchlist button – STUCK TO BOTTOM OF LEFT COLUMN */
+/* Add-to-watchlist button anchored at the bottom of the left column.
+   Uses the same comic button language with a slight rotation and hover lift. */
 .modal-favorite-btn {
   padding: 8px 14px;
   border: 3px solid #000;
@@ -459,7 +509,7 @@ h1 {
   transform: rotate(-1deg);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 
-  margin-top: auto;      /* pushes button to the bottom */
+  margin-top: auto;
   margin-bottom: 0;
   align-self: flex-start;
 }
@@ -474,12 +524,15 @@ h1 {
   box-shadow: 1px 1px 0 #660000;
 }
 
-/* === RIGHT COLUMN === */
+/* Right column of the modal layout.
+   Provides padding to separate the synopsis from the left content. */
 .modal-right {
   width: 90%;
   padding: 10px 0 0 10px;
 }
 
+/* Scrollable synopsis box.
+   Uses a comic-style border, light background and a slight tilt. */
 .modal-synopsis {
   font-size: 14px;
   color: #000;
@@ -489,15 +542,13 @@ h1 {
   border-radius: 6px;
   padding: 10px;
   box-shadow: 3px 3px 0 #000;
-
-  /* COMIC TILT */
   transform: rotate(1deg);
-
   max-height: 50vh;
   overflow-y: auto;
 }
 
-/* === Close button === */
+/* Circular close button in the top-right corner of the modal.
+   Bright red with a strong shadow to make it easy to see. */
 .modal-close {
   position: absolute;
   top: 10px;
@@ -514,13 +565,17 @@ h1 {
 }
 
 .modal-close:hover {
-  transform: translate(-2px,-2px);
+  transform: translate(-2px, -2px);
   box-shadow: 5px 5px 0 #000;
 }
 
-/* ============================
+/* ============================================================
    COMIC-STYLE TOAST POPUP
-   ============================ */
+   Temporary feedback messages (for example, added to watchlist)
+   ------------------------------------------------------------
+   This toast appears briefly in the center of the screen to
+   confirm actions without sending the user to another page.
+   ============================================================ */
 
 .toast {
   position: fixed;
@@ -537,13 +592,14 @@ h1 {
   box-shadow: 5px 5px 0 #ff1b1b;
   opacity: 0;
   pointer-events: none;
-  z-index: 9999;  /* make sure toast is above the modal */
-
+  z-index: 9999;
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;
 }
 
+/* Visible state for the toast.
+   Scales it slightly and applies a tiny rotation for a playful feel. */
 .toast.show {
   opacity: 1;
   transform: translateX(-50%) scale(1) rotate(-1deg);
@@ -552,25 +608,31 @@ h1 {
 /* ============================================================
    WATCHLIST PAGE STYLES
    Curved text header, empty state, responsive grid
+   ------------------------------------------------------------
+   These styles handle the dedicated watchlist page: the curved
+   SVG header, empty-state with video, and the saved anime grid.
    ============================================================ */
 
-/* Watchlist header layout */
+/* Container for the watchlist header.
+   Centers both the main title and the curved text decoration. */
 .watchlist-header {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Watchlist page title */
+/* Watchlist main title.
+   Uses a small negative top margin to pull it closer to the top. */
 .watchlist-main-title {
   margin: -10px 0 8px 0;
   text-align: center;
 }
 
-/* Curved SVG text container */
+/* Wrapper that centers the curved SVG text around the header.
+   Uses pointer-events: none so it does not block interactions. */
 .circle-text-wrapper {
   position: absolute;
-  top: 180px; /* controls vertical placement */
+  top: 180px;
   left: 0;
   width: 100%;
   display: flex;
@@ -578,12 +640,15 @@ h1 {
   pointer-events: none;
 }
 
+/* SVG element that contains the curved text path.
+   Its size controls the overall curve. */
 .circle-text {
   width: 350px;
   height: 220px;
 }
 
-/* Curved dynamic text */
+/* Dynamic curved text displayed when the watchlist is empty.
+   It gently breathes and can react to hover states for extra feedback. */
 .curved-no-saved {
   font-family: futura, system-ui, sans-serif;
   font-size: 30px;
@@ -592,18 +657,18 @@ h1 {
   letter-spacing: 3px;
   transform-origin: 50% 50%;
   transition: transform 0.2s ease, fill 0.2s ease;
-
-  /* gentle idle breathing animation */
   animation: curvedIdle 4s ease-in-out infinite;
 }
 
-/* When video (or wrapper) is hovered – stronger interaction */
+/* Stronger state applied when the video or wrapper is hovered.
+   Scales up the text and slightly rotates it while turning it red. */
 .curved-no-saved.is-hovered {
   fill: #ff1b1b;
-  transform: scale(2.0) rotate(-2deg);
+  transform: scale(2) rotate(-2deg);
 }
 
-/* Idle breathing */
+/* Idle breathing animation for the curved text.
+   Repeats the smooth scaling to make the page feel alive. */
 @keyframes curvedIdle {
   0% {
     transform: scale(1);
@@ -616,7 +681,8 @@ h1 {
   }
 }
 
-/* Empty-state column layout */
+/* Column layout for the empty-state content.
+   Aligns the crying video, text and start button with some spacing. */
 .watchlist-empty-wrapper {
   display: flex;
   flex-direction: column;
@@ -625,7 +691,8 @@ h1 {
   margin-top: 130px;
 }
 
-/* Crying video styling */
+/* Styling for the crying video element.
+   Rounds it into a pill/circle shape and adds a comic shadow. */
 .empty-video {
   width: 300px;
   max-width: 90vw;
@@ -634,16 +701,18 @@ h1 {
   overflow: hidden;
 }
 
-/* CTA under video */
+/* Wrapper for the "start exploring" button under the video.
+   Adds spacing above the main call-to-action. */
 .watchlist-start-btn {
   margin-top: 20px;
 }
 
-/* Responsive grid for saved items */
+/* Grid layout for saved watchlist items.
+   Mirrors the search results grid to keep the visual language consistent. */
 .watchlist-grid {
   margin-top: 30px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px,1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
   max-width: 1100px;
   margin-left: auto;
@@ -651,9 +720,10 @@ h1 {
   justify-items: center;
 }
 
-/* Watchlist remove button spacing */
+/* Remove-from-watchlist button under each saved card.
+   Uses the same comic button style with a hover lift to signal interactivity. */
 .remove-btn {
-  margin-top: 10px;        /* space above button */
+  margin-top: 10px;
   padding: 6px 12px;
   border: 3px solid #000;
   background: #fff;

@@ -3,13 +3,13 @@
 // Grid container where cards OR empty state will be shown
 const watchlistContainer = document.getElementById("watchlist");
 
-// Subtitle heading (if it exists in your HTML, otherwise this stays null)
+// Subtitle heading
 const watchlistSubtitle = document.querySelector(".watchlist-subtitle");
 
 // Curved text on the sphere: <text class="curved-no-saved"><textPath>...</textPath></text>
 const curvedTextPath = document.querySelector(".curved-no-saved textPath");
 
-// Modal elements (same IDs as on index.html)
+// Modal elements - same IDs as on index.html
 const modal = document.getElementById("mangaModal");
 const modalImage = document.getElementById("modalImage");
 const modalTitle = document.getElementById("modalTitle");
@@ -85,7 +85,7 @@ function renderWatchlist() {
     return;
   }
 
-  // CASE 2: WE HAVE SAVED ANIME
+  //  WE HAVE SAVED ANIME
 
   if (watchlistSubtitle) {
     watchlistSubtitle.textContent = "";
@@ -135,7 +135,7 @@ function renderWatchlist() {
 renderWatchlist();
 
 // ======================================================
-// CLICK HANDLING (Remove button + open modal on card click)
+// CLICK HANDLING - remove button and open card modal
 // ======================================================
 
 watchlistContainer.addEventListener("click", (event) => {
