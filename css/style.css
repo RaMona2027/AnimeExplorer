@@ -75,7 +75,7 @@ h1 {
   font-size: 100px;
   color: #ff1b1b;
   text-align: center;
-  margin-top: -80px;
+  margin-top: -10px;
   margin-bottom: 20px;
 }
 
@@ -164,7 +164,7 @@ h1 {
   font-weight: 700;
   color: red;
   background: rgba(0, 0, 0, 0);
-  padding: 100px 14px;
+  padding: 150px 14px;
   border-radius: 6px;
   text-shadow: 0 0 20px rgba(255, 27, 27, 0.7);
   animation: taglinePulse 2.4s ease-in-out infinite;
@@ -199,7 +199,7 @@ h1 {
   border: 3px solid #000;
   border-radius: 6px;
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.85);
-  margin-top: 20px;
+  margin-top: -120px;
 }
 
 /* Text input for search queries.
@@ -630,7 +630,7 @@ h1 {
 /* Watchlist main title.
    Uses a small negative top margin to pull it closer to the top. */
 .watchlist-main-title {
-  margin: -10px 0 8px 0;
+  margin: 50px 0 8px 0;
   text-align: center;
 }
 
@@ -638,7 +638,7 @@ h1 {
    Uses pointer-events: none so it does not block interactions. */
 .circle-text-wrapper {
   position: absolute;
-  top: 180px;
+  top: 250px;
   left: 0;
   width: 100%;
   display: flex;
@@ -716,7 +716,7 @@ h1 {
 /* Grid layout for saved watchlist items.
    Mirrors the search results grid to keep the visual language consistent. */
 .watchlist-grid {
-  margin-top: 30px;
+  margin-top: 100px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
